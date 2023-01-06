@@ -1,0 +1,13 @@
+{
+  "name": "fincode-js",
+  "version": "0.0.0",
+  "main": "dist/main.js",
+  "author": "GMO Epsilon, Inc.",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "jest": "^29.0.0",
+    "ts-jest": "^29.0.0"
+  }
+}
