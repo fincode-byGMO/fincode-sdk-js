@@ -10,7 +10,7 @@
         "allowJs": false,
         "noEmit": true ,   
         "removeComments": true,
-        "forceConsistentCasingInFileNames": true
+        "forceConsistentCasingInFileNames": true,
     },
     "include": ["src"]
 }
