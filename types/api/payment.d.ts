@@ -755,5 +755,43 @@ export namespace Payment {
         list: Payment[];
     }
 
+    /**
+     * Request object of Capturing payment (used in PUT /v1/payments/{id}/capture)
+     */
+    export type CapturingRequest = {
+        /**
+         * Payment method you want to use in this payment execution.
+         * 
+         * - `Card`: card payment.
+         */
+        pay_type: string;
+
+        /**
+         * access ID issued for this payment to use in this payment context.
+         */
+        access_id: string;
+
+        /**
+         * Charging method of card payment.
+         * 
+         * - `1`: The customer will be charged for this payment in a lump-sum.
+         * - `2`: The customer will be charged for this payment in several installments.
+         * 
+         * You must fill this field when this payment's job_type is `AUTH` or `CAPTURE`
+         */
+        method: "1" | "2" | null;
+
+        /**
+         * The number of installments that will charge to the customer in this payment registered as installment payment.
+         */
+        pay_times: string | null;
+    }
+    
+    /**
+     * Response object of Capturing payment (used in PUT /v1/payments/{id}/capture)
+     */
+    export type CapturingResponse = Readonly<_CapturingResponse>
+    export type _CapturingResponse = Payment
+
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
 }
