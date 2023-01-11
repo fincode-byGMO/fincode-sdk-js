@@ -854,5 +854,48 @@ export namespace Payment {
     export type ReauthenticateResponse = Readonly<_ReauthenticateResponse>
     type _ReauthenticateResponse = Payment
 
+    /**
+     * Request object of Change the amount of payment (used PUT /v1/payments/{id}/change)
+     */
+    export type ChangeAmountRequest = {
+        /**
+         * Payment method you want to use in this payment execution.
+         * 
+         * - `Card`: card payment.
+         */
+        pay_type: string;
+
+        /**
+         * access ID issued for this payment to use in this payment context.
+         */
+        access_id: string;
+        
+        /**
+         * Job category of this payment.
+         * 
+         * - `CHECK`: fincode checks if the card is valid.
+         * - `AUTH`: fincode authorizes a charge with sum of "amount" and "tax".
+         * - `CAPTURE`: fincode captures authorized charge.
+         */
+        job_code: "AUTH" | "CAPTURE";
+
+        /**
+         * Amount of this payment. this value must be in range of 0 to 9999999.
+         * If "job_code" param's value is "AUTH" or "CAPTURE", then this param become required.
+         */
+        amount: string;
+
+        /**
+         * Tax and shipping fee. if this param is set, "amount" param must also be set.
+         */
+        tax: string | null;
+    }
+    
+    /**
+     * Response object of Change the amount of payment (used PUT /v1/payments/{id}/change)
+     */
+    export type ChangeAmountResponse = Readonly<_ChangeAmountResponse>
+    type _ChangeAmountResponse = Payment
+
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
 }
