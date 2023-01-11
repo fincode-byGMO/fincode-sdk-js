@@ -248,14 +248,14 @@ export namespace Payment {
          * 
          * Format: YYYY/MM/dd HH:mm:ss.SSS
          */
-        created: string
+        created: string;
 
         /**
          * Date this payment was updated.
          * 
          * Format: YYYY/MM/dd HH:mm:ss.SSS
          */
-        updated: string
+        updated: string;
         
     }
 
@@ -882,12 +882,12 @@ export namespace Payment {
          * - `C`: Required 3D Secure authentication challenge.
          * - `R`: Authentication or account verification was rejected.
          */
-        tds2_trans_result: ThreeDSecureAuthResult
+        tds2_trans_result: ThreeDSecureAuthResult;
 
         /**
          * Reason of result of 3D Secure 2.0 authentication.
          */
-        tds2_trans_result_reason: string
+        tds2_trans_result_reason: string;
     }
 
     /**
@@ -912,5 +912,5 @@ export namespace Payment {
      * - `C`: Required 3D Secure authentication challenge.
      * - `R`: Authentication or account verification was rejected.
      */
-    export type ThreeDSecureAuthResult = "Y" | "N" | "U" | "A" | "C" | "R"
+    export type ThreeDSecureAuthResult = "Y" | "N" | "U" | "A" | "C" | "R";
 }
