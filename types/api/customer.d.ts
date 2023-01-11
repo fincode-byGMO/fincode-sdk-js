@@ -150,10 +150,83 @@ export namespace Customer {
          */
         addr_state: string | null;
     }
-    /**
-     * Response object of Creating customer (used in POST /v1/customers)
-     */
-    export type CreatingResponse = Readonly<_CreatingResponse>
-    type _CreatingResponse = CustomerObject
 
+    /**
+     * Request object of Updating customer (used in PUT /v1/customers/{id})
+     */
+    export type UpdatingRequest = {
+        /**
+         * Customer's name
+         */
+        name: string | null;
+        
+        /**
+         * Customer's email
+         */
+        email: string | null;
+
+        /**
+         * Country Code of customer's phone.
+         */
+        phone_cc: string | null;
+        
+        /**
+         * Number of customer's phone.
+         */
+        phone_no: string | null;
+        
+        /**
+         * City of the customer's billing address.
+         */
+        addr_city: string | null;
+        
+        /**
+         * ISO 3166-1 numeric country code of the customer's billing address.
+         */
+        addr_country: string | null;
+
+        /**
+         * 1st line of the customer's billing address.
+         */
+        addr_line1: string | null;
+        
+        /**
+         * 2nd line of the customer's billing address.
+         */
+        addr_line2: string | null;
+
+        /**
+         * 3rd line of the customer's billing address.
+         */
+        addr_line3: string | null;
+
+        /**
+         * Postal code of the customer's billing address.
+         */
+        addr_post_code: string | null;
+
+        /**
+         * ISO 3166-2 state code of the customer's billing address.
+         */
+        addr_state: string | null;
+    }
+
+    /**
+     * Response object of Deleting customer (used in DELETE /v1/customers/{id})
+     */
+    export type DeletingResponse = {
+        /**
+         * Customer ID that has been deleted.
+         */
+        id: string;
+
+        /**
+         * Flag this customer has already been deleted or not.
+         * 
+         * - `0`: Not deleted. This customer is still available.
+         * - `1`: Deleted. This customer is no longer available.
+         */
+        delete_flag: "0" | "1";
+    }
 }
+
