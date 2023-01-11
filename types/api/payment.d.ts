@@ -793,5 +793,28 @@ export namespace Payment {
     export type CapturingResponse = Readonly<_CapturingResponse>
     export type _CapturingResponse = Payment
 
+    /**
+     * Request object of Canceling payment (used PUT /v1/payments/{id}/cancel)
+     */
+    export type CancelingRequest = {
+        /**
+         * Payment method you want to use in this payment execution.
+         * 
+         * - `Card`: card payment.
+         */
+        pay_type: string;
+
+        /**
+         * access ID issued for this payment to use in this payment context.
+         */
+        access_id: string;
+    }
+
+    /**
+     * Response object of Canceling payment (used PUT /v1/payments/{id}/cancel)
+     */
+    export type CancelingResponse =  Readonly<_CapturingResponse>
+    type _CancelingResponse = Payment
+
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
 }
