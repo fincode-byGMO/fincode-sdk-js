@@ -897,5 +897,29 @@ export namespace Payment {
     export type ChangeAmountResponse = Readonly<_ChangeAmountResponse>
     type _ChangeAmountResponse = Payment
 
+    /**
+     * Request object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
+     */
+    export type ExecutingAfter3DSecureRequest = {
+        /**
+         * Payment method you want to use in this payment execution.
+         * 
+         * - `Card`: card payment.
+         */
+        pay_type: string;
+
+        /**
+         * access ID issued for this payment to use in this payment context.
+         */
+        access_id: string;
+    };
+    
+    /**
+     * Response object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
+     */
+    export type ExecutingAfter3DSecureResponse = Readonly<_ExecutingAfter3DSecureResponse>;
+    type _ExecutingAfter3DSecureResponse = Payment;
+    
+
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
 }
