@@ -336,12 +336,6 @@ export namespace Payment {
     }
 
     /**
-     * Response object of Registering payment (used in POST /v1/payments)
-     */
-    export type RegisteringResponse = Readonly<_RegisteringResponse>
-    type _RegisteringResponse = PaymentObject
-
-    /**
      * Request object of Executing payment (used in PUT /v1/payments/{id})
      */
     export type ExecutingRequest = {
@@ -697,62 +691,6 @@ export namespace Payment {
         tds2_recuring_frequency: string | null;
     }
 
-    /**
-     * Response object of Executing payment  (used in PUT /v1/payments/{id})
-     */
-    export type ExecutingResponse = Readonly<_ExecutingResponse>
-    type _ExecutingResponse = PaymentObject & {
-        acs: string;
-        acs_url: string;
-        pa_req:string;
-    }
-
-    /**
-     * Response object of Retrieving payment (used in GET /v1/payments/{id})
-     */
-    export type RetrievingResponse = Readonly<_RetrievingResponse>
-    type _RetrievingResponse = PaymentObject
-
-    /**
-     * Response object of Retrieving payment list (used in GET /v1/payments)
-     */
-    export type RetrievingListResponse = Readonly<_RetrievingListResponse>
-    type _RetrievingListResponse = {
-        /**
-         * Total count of searching result.
-         */
-        total_count: number;
-
-        /**
-         * Last page number of payment lists.
-         */
-        last_page: number;
-
-        /**
-         * Current page number of payment lists.
-         */
-        current_page: number;
-
-        /**
-         * Max number of each payment list.
-         */
-        limit: number;
-
-        /**
-         * URL for the next page.
-         */
-        link_next: string;
-
-        /**
-         * URL for the previous page.
-         */
-        link_previous: string;
-
-        /**
-         * List of payment objects
-         */
-        list: PaymentObject[];
-    }
 
     /**
      * Request object of Capturing payment (used in PUT /v1/payments/{id}/capture)
@@ -785,12 +723,6 @@ export namespace Payment {
          */
         pay_times: string | null;
     }
-    
-    /**
-     * Response object of Capturing payment (used in PUT /v1/payments/{id}/capture)
-     */
-    export type CapturingResponse = Readonly<_CapturingResponse>
-    export type _CapturingResponse = PaymentObject
 
     /**
      * Request object of Canceling payment (used PUT /v1/payments/{id}/cancel)
@@ -808,12 +740,6 @@ export namespace Payment {
          */
         access_id: string;
     }
-
-    /**
-     * Response object of Canceling payment (used PUT /v1/payments/{id}/cancel)
-     */
-    export type CancelingResponse =  Readonly<_CapturingResponse>
-    type _CancelingResponse = PaymentObject
 
     /**
      * Request object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
@@ -846,12 +772,6 @@ export namespace Payment {
          */
         pay_times: string | null;
     }
-
-    /**
-     * Response object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
-     */
-    export type ReauthenticateResponse = Readonly<_ReauthenticateResponse>
-    type _ReauthenticateResponse = PaymentObject
 
     /**
      * Request object of Change the amount of payment (used PUT /v1/payments/{id}/change)
@@ -890,11 +810,6 @@ export namespace Payment {
         tax: string | null;
     }
     
-    /**
-     * Response object of Change the amount of payment (used PUT /v1/payments/{id}/change)
-     */
-    export type ChangeAmountResponse = Readonly<_ChangeAmountResponse>
-    type _ChangeAmountResponse = PaymentObject
 
     /**
      * Request object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
@@ -911,13 +826,7 @@ export namespace Payment {
          * access ID issued for this payment to use in this payment context.
          */
         access_id: string;
-    };
-    
-    /**
-     * Response object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
-     */
-    export type ExecutingAfter3DSecureResponse = Readonly<_ExecutingAfter3DSecureResponse>;
-    type _ExecutingAfter3DSecureResponse = PaymentObject;
+    }
     
     /**
      * Request object of Executing 3D Secure authentication (used PUT /v1/secures/{access_id}) 
@@ -926,7 +835,7 @@ export namespace Payment {
         /**
          * Browser information returned to the URL you set for "tds2_ret_url" parameter of response of PUT /v1/payments/{id}.
          */
-        param: string
+        param: string;
     }
     
     /**
