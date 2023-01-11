@@ -920,6 +920,49 @@ export namespace Payment {
     export type ExecutingAfter3DSecureResponse = Readonly<_ExecutingAfter3DSecureResponse>;
     type _ExecutingAfter3DSecureResponse = Payment;
     
+    /**
+     * Request object of Executing 3D Secure authentication (used PUT /v1/secures/{access_id}) 
+     */
+    export type ThreeDSecure2AuthenticationRequest = {
+        /**
+         * Browser information returned to the URL you set for "tds2_ret_url" parameter of response of PUT /v1/payments/{id}.
+         */
+        param: string
+    }
+    
+    /**
+     * Response object of Executing 3D Secure authentication (used PUT /v1/secures/{access_id}) 
+     */
+    export type ThreeDSecure2AuthenticationResponse = Readonly<_ThreeDSecure2AuthenticationResponse>
+    type _ThreeDSecure2AuthenticationResponse = {
+        /**
+         * Result code of 3D Secure 2.0 authentication
+         */
+        tds2_trans_result: ThreeDSecureAuthenticationResult
+
+        /**
+         * Reason of result of 3D Secure 2.0 authentication.
+         */
+        tds2_trans_result_reason: string
+
+        /**
+         * URL to use if 3D Secure authentication challenge was required.
+         */
+        challenge_url: string
+    }
+
 
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
+
+    /**
+     * 3D Secure authentication result.
+     * 
+     * - `Y`: Authentication or bank account successfully verified.
+     * - `N`: Unauthorized or account could not be verified, or the payment was rejected.
+     * - `U`: Authentication or account verification could not be performed.
+     * - `A`: A trial of the authentication process was conducted.
+     * - `C`: Required 3D Secure authentication challenge.
+     * - `R`: Authentication or account verification was rejected.
+     */
+    export type ThreeDSecureAuthenticationResult = "Y" | "N" | "U" | "A" | "C" | "R"
 }
