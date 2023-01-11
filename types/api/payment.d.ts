@@ -816,5 +816,43 @@ export namespace Payment {
     export type CancelingResponse =  Readonly<_CapturingResponse>
     type _CancelingResponse = Payment
 
+    /**
+     * Request object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
+     */
+    export type ReauthenticateRequest = {
+        /**
+         * Payment method you want to use in this payment execution.
+         * 
+         * - `Card`: card payment.
+         */
+        pay_type: string;
+
+        /**
+         * access ID issued for this payment to use in this payment context.
+         */
+        access_id: string;
+
+        /**
+         * Charging method of card payment.
+         * 
+         * - `1`: The customer will be charged for this payment in a lump-sum.
+         * - `2`: The customer will be charged for this payment in several installments.
+         * 
+         * You must fill this field when this payment's job_type is `AUTH` or `CAPTURE`
+         */
+        method: "1" | "2";
+
+        /**
+         * The number of installments that will charge to the customer in this payment registered as installment payment.
+         */
+        pay_times: string | null;
+    }
+
+    /**
+     * Response object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
+     */
+    export type ReauthenticateResponse = Readonly<_ReauthenticateResponse>
+    type _ReauthenticateResponse = Payment
+
     export type Status = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED";
 }
