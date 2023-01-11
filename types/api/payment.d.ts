@@ -4,7 +4,7 @@ export namespace Payment {
     /**
      * Payment Object
      */
-    export type Payment = {
+    export type PaymentObject = {
         /**
          * Shop ID that registered this payment.
          */
@@ -250,7 +250,6 @@ export namespace Payment {
          */
         created: string
 
-        
         /**
          * Date this payment was updated.
          * 
@@ -340,7 +339,7 @@ export namespace Payment {
      * Response object of Registering payment (used in POST /v1/payments)
      */
     export type RegisteringResponse = Readonly<_RegisteringResponse>
-    type _RegisteringResponse = Payment
+    type _RegisteringResponse = PaymentObject
 
     /**
      * Request object of Executing payment (used in PUT /v1/payments/{id})
@@ -702,7 +701,7 @@ export namespace Payment {
      * Response object of Executing payment  (used in PUT /v1/payments/{id})
      */
     export type ExecutingResponse = Readonly<_ExecutingResponse>
-    type _ExecutingResponse = Payment & {
+    type _ExecutingResponse = PaymentObject & {
         acs: string;
         acs_url: string;
         pa_req:string;
@@ -712,7 +711,7 @@ export namespace Payment {
      * Response object of Retrieving payment (used in GET /v1/payments/{id})
      */
     export type RetrievingResponse = Readonly<_RetrievingResponse>
-    type _RetrievingResponse = Payment
+    type _RetrievingResponse = PaymentObject
 
     /**
      * Response object of Retrieving payment list (used in GET /v1/payments)
@@ -752,7 +751,7 @@ export namespace Payment {
         /**
          * List of payment objects
          */
-        list: Payment[];
+        list: PaymentObject[];
     }
 
     /**
@@ -791,7 +790,7 @@ export namespace Payment {
      * Response object of Capturing payment (used in PUT /v1/payments/{id}/capture)
      */
     export type CapturingResponse = Readonly<_CapturingResponse>
-    export type _CapturingResponse = Payment
+    export type _CapturingResponse = PaymentObject
 
     /**
      * Request object of Canceling payment (used PUT /v1/payments/{id}/cancel)
@@ -814,7 +813,7 @@ export namespace Payment {
      * Response object of Canceling payment (used PUT /v1/payments/{id}/cancel)
      */
     export type CancelingResponse =  Readonly<_CapturingResponse>
-    type _CancelingResponse = Payment
+    type _CancelingResponse = PaymentObject
 
     /**
      * Request object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
@@ -852,7 +851,7 @@ export namespace Payment {
      * Response object of Re-authenticate payment (used PUT /v1/payments/{id}/cancel)
      */
     export type ReauthenticateResponse = Readonly<_ReauthenticateResponse>
-    type _ReauthenticateResponse = Payment
+    type _ReauthenticateResponse = PaymentObject
 
     /**
      * Request object of Change the amount of payment (used PUT /v1/payments/{id}/change)
@@ -895,7 +894,7 @@ export namespace Payment {
      * Response object of Change the amount of payment (used PUT /v1/payments/{id}/change)
      */
     export type ChangeAmountResponse = Readonly<_ChangeAmountResponse>
-    type _ChangeAmountResponse = Payment
+    type _ChangeAmountResponse = PaymentObject
 
     /**
      * Request object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
@@ -918,7 +917,7 @@ export namespace Payment {
      * Response object of executing payment after 3D Secure (used PUT /v1/payments/{id}/secure)
      */
     export type ExecutingAfter3DSecureResponse = Readonly<_ExecutingAfter3DSecureResponse>;
-    type _ExecutingAfter3DSecureResponse = Payment;
+    type _ExecutingAfter3DSecureResponse = PaymentObject;
     
     /**
      * Request object of Executing 3D Secure authentication (used PUT /v1/secures/{access_id}) 
