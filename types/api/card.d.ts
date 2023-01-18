@@ -4,6 +4,16 @@ export namespace Card {
      */
     export type CardObject = {
         /**
+         * Customer ID of customer who owns this card.
+         */
+        customer_id: string;
+
+        /**
+         * Card ID of this.
+         */
+        id: string;
+
+        /**
          * Flag that means the customer uses this card by default or not.
          * 
          * - `0`: OFF
