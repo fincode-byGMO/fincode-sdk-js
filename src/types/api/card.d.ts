@@ -76,7 +76,7 @@ export namespace Card {
          * Card brands user can use in fincode.
          * 
          * - `VISA`: Visa card.
-         * - `MASTER`: MasterCard card.
+         * - `MASTER`: Mastercard card.
          * - `JCB`: JCB card.
          * - `AMEX`: American Express card.
          * - `Diners`: DinersClub card.
@@ -88,7 +88,7 @@ export namespace Card {
      * Card brands user can use in fincode.
      * 
      * - `VISA`: Visa card.
-     * - `MASTER`: MasterCard card.
+     * - `MASTER`: Mastercard card.
      * - `JCB`: JCB card.
      * - `AMEX`: American Express card.
      * - `Diners`: DinersClub card.

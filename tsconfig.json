@@ -1,16 +1,23 @@
 {
     "compilerOptions": {
         "target": "esnext",
+        "moduleResolution": "node",
         "module": "esnext",
         "strict": true,
         "alwaysStrict": true,
-        "outDir": "./dist",
+        "outDir": "/dist",
         "rootDir": "./src",
         "declaration": false,
         "allowJs": false,
         "noEmit": true ,   
-        "removeComments": true,
+        "removeComments": false,
         "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "DOM",
+        ],
+        "paths": {
+            "@/*": ["./src/*"]
+        }
     },
     "include": ["src"]
 }
