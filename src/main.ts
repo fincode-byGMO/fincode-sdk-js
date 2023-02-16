@@ -6,7 +6,7 @@ const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/
 
 export type FincodeConfig = {}
 
-export type LoadFincodeFn = (isProduction: boolean, config?: FincodeConfig) => Promise<Fincode|null>
+export type LoadFincodeFn = (isProduction?: boolean, config?: FincodeConfig) => Promise<Fincode|null>
 
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
@@ -24,7 +24,7 @@ const findFincodeScript = (): HTMLScriptElement | null => {
     return null
 }
 
-const injectFincodeScript = (isProduction:boolean = false, config?: FincodeConfig): HTMLScriptElement => {
+const injectFincodeScript = (isProduction?:boolean, config?: FincodeConfig): HTMLScriptElement => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined")
     }
