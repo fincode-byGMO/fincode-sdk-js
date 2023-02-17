@@ -1,6 +1,8 @@
-export * from "./error"
+export type APIErrorResponse = {
+    errors: APIError[]
+}
 
-export * from "./card"
-export * from "./customer"
-export * from "./payment"
-export * from "./token"
+export type APIError = {
+    error_code: string
+    error_messaage: string
+}

@@ -1,8 +1,10 @@
-import { Card, Token, Payment } from "../api/api";
-import { Appearance, UI } from "./ui";
+import { Card } from "../api/card";
+import { Payment } from "../api/payment";
+import { Token } from "../api/token";
+import { Appearance, FincodeUI } from "./ui";
 
-export interface Fincode {
-    
+export type FincodeInitializer = (apiKey: string) => FincodeInstance
+export type FincodeInstance = {
     tokens: (
         card: {
             card_no: string,
@@ -17,8 +19,9 @@ export interface Fincode {
 
     cards: (
         card: {
+            card_id?: string
             customer_id: string,
-            default_flag: "0" | "1",
+            default_flag?: "0" | "1",
             card_no?: string,
             expire?: string,
             security_code?: string,
@@ -37,7 +40,7 @@ export interface Fincode {
             expire?: string,
             customer_id?: string,
             card_id?: string,
-            method?: "1" | "2",
+            method: "1" | "2",
             pay_times?: string,
             security_code?: string,
             holder_name?: string,
@@ -45,7 +48,6 @@ export interface Fincode {
         callback: (status: number, response: Payment.PaymentObject) => void,
         errorCallback: () => void,
     ) => void
-
-    ui: (appearance: Appearance) => UI
+        
+    ui: (appearance: Appearance) => FincodeUI
 }
-

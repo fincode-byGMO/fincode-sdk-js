@@ -1,4 +1,4 @@
-export interface UI {
+export interface FincodeUI {
     
     /**
      * 
@@ -185,7 +185,7 @@ export type FormData = {
     /**
      * Payment method
      */
-    method: string
+    method: "1" | "2"
 
     /**
      * Card number
