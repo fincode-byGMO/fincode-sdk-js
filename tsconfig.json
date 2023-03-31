@@ -5,19 +5,24 @@
         "module": "esnext",
         "strict": true,
         "alwaysStrict": true,
-        "outDir": "/dist",
+        "outDir": "./dist",
         "rootDir": "./src",
-        "declaration": false,
+        "declaration": true,
+        "declarationMap": true,
+        "declarationDir": "./dist/types",
         "allowJs": false,
-        "noEmit": true ,   
+        // "noEmit": true ,   
         "removeComments": false,
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "DOM",
         ],
         "paths": {
-            "@/*": ["./src/*"]
+            "~/*": ["./*"]
         }
     },
-    "include": ["src"]
+    "include": ["src"],
+    "exclude": [
+        "src/**/*.test.ts",
+    ]
 }

@@ -1,4 +1,4 @@
-import { Fincode } from "./types/js/fincode"
+import { FincodeInitializer, FincodeInstance } from "./js/fincode"
 
 const V1_URL_TEST = "https://js.test.fincode.jp/v1/fincode.js"
 const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js"
@@ -6,7 +6,7 @@ const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/
 
 export type FincodeConfig = {}
 
-export type LoadFincodeFn = (isProduction?: boolean, config?: FincodeConfig) => Promise<Fincode|null>
+export type FincodeLoaderFn = (publicKey:string ,isProduction?: boolean, config?: FincodeConfig) => () => Promise<FincodeInstance|null>
 
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
@@ -32,7 +32,8 @@ const injectFincodeScript = (isProduction?:boolean, config?: FincodeConfig): HTM
     const queryParam = buildQueryParam(config)
 
     const script = document.createElement("script")
-    script.src = isProduction ?  `${V1_URL_TEST}${queryParam? `?${queryParam}` : ""}` : `${V1_URL_PROD}${queryParam? `?${queryParam}` : ""}`
+    const param = queryParam? `?${queryParam}` : ""
+    script.src = isProduction ?  `${V1_URL_PROD}${param}`: `${V1_URL_TEST}${param}`
 
     const injectTarget = document.head || document.body
 
@@ -53,21 +54,21 @@ const buildQueryParam = (config?: FincodeConfig): string => {
 
 const ALREADY_SCRIPT_LOADED_MESSAGE = "fincode.js is already loaded. Config will be ignored."
 
-export const loadFincode: LoadFincodeFn = (isProduction ,config) => {
-    const fincodePromise = new Promise<Fincode|null>((resolve, reject) => {
+export const initFincode: FincodeLoaderFn = (publicKey, isProduction, config) => {
+    const fincodePromise = () => new Promise<FincodeInstance |null>((resolve, reject) => {
         if (typeof window === "undefined") {
             resolve(null)
             return
         }
 
-        const fincode = window.Fincode
+        const initializer = window.Fincode
 
-        if (fincode) {
+        if (initializer) {
             if (config) {
                 console.warn(ALREADY_SCRIPT_LOADED_MESSAGE)
             }
 
-            resolve(fincode)
+            resolve(initializer(publicKey))
             return
         }
 
@@ -78,12 +79,13 @@ export const loadFincode: LoadFincodeFn = (isProduction ,config) => {
                     console.warn("fincode.js is already loaded. Config will be ignored.")
                 }
             } else {
-                script = injectFincodeScript(isProduction, config)
+                script = injectFincodeScript(isProduction,config,
+                )
             }
 
             script.addEventListener("load", (evt) => {
                 if (window.Fincode) {
-                    resolve(window.Fincode)
+                    resolve(window.Fincode(publicKey))
                 } else {
                     reject(new Error("fincode.js is not available"))
                 }
