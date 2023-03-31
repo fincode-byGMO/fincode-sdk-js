@@ -1,4 +1,4 @@
-import {  FincodeInitializer } from "./js/fincode";
+import { FincodeInitializer } from "./js/fincode";
 
 declare global {
     interface Window {

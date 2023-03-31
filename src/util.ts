@@ -1,9 +1,9 @@
-import { APIErrorResponse } from "./types/api/api";
-import { Card } from "./types/api/card";
-import { Payment } from "./types/api/payment";
-import { Token } from "./types/api/token";
-import { FincodeInstance } from "./types/js/fincode";
-import { FincodeUI } from "./types/js/ui";
+import { APIErrorResponse } from "./api/api";
+import { Card } from "./api/card";
+import { Payment } from "./api/payment";
+import { Token } from "./api/token";
+import { FincodeInstance } from "./js/fincode";
+import { FincodeUI } from "./js/ui";
 
 /**
  * 
@@ -137,8 +137,10 @@ export const getCardToken = (
 export const registerCard = (
     fincode: FincodeInstance,
     ui: FincodeUI,
-    customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
-    useDefault: boolean = false,
+    arg: {
+        customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
+        useDefault?: boolean,
+    }
 ) => new Promise<Card.CardObject>((resolve, reject) => {
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
@@ -151,12 +153,12 @@ export const registerCard = (
         }
 
         const card: Parameters<FincodeInstance["cards"]>[0] = {
-            customer_id: customerId,
+            customer_id: arg.customerId,
             card_no: formData.cardNo,
             expire: formData.expire,
             security_code: formData.CVC,
             holder_name: formData.holderName,
-            default_flag: useDefault? "1": "0",
+            default_flag: arg.useDefault? "1": "0",
         }
 
         const onSuccess: Parameters<FincodeInstance["cards"]>[1] = (status, response) => {
@@ -194,15 +196,17 @@ export const registerCard = (
 export const updateCard = (
     fincode: FincodeInstance,
     ui: FincodeUI,
-    cardId: string,
-    customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
-    useDefault: boolean = false,
+    arg: {
+        cardId: string,
+        customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
+        useDefault?: true,
+    }
 ) => new Promise<Card.CardObject>((resolve, reject) => {
     ui.getFormData().then((formData) => {
         const card: Parameters<FincodeInstance["cards"]>[0] = {
-            card_id: cardId,
-            customer_id: customerId,
-            default_flag : useDefault? "1": undefined,
+            card_id: arg.cardId,
+            customer_id: arg.customerId,
+            default_flag : arg.useDefault? "1": undefined,
             holder_name: formData.holderName,
             security_code: formData.CVC,
         }

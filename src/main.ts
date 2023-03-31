@@ -1,4 +1,4 @@
-import { FincodeInitializer, FincodeInstance } from "./types/js/fincode"
+import { FincodeInitializer, FincodeInstance } from "./js/fincode"
 
 const V1_URL_TEST = "https://js.test.fincode.jp/v1/fincode.js"
 const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js"
@@ -6,10 +6,7 @@ const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/
 
 export type FincodeConfig = {}
 
-export type FincodeLoaderFn = (publicKey:string ,arg?: {
-    isProduction?: boolean,
-    config?: FincodeConfig
-}) => () => Promise<FincodeInstance|null>
+export type FincodeLoaderFn = (publicKey:string ,isProduction?: boolean, config?: FincodeConfig) => () => Promise<FincodeInstance|null>
 
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
@@ -57,7 +54,7 @@ const buildQueryParam = (config?: FincodeConfig): string => {
 
 const ALREADY_SCRIPT_LOADED_MESSAGE = "fincode.js is already loaded. Config will be ignored."
 
-export const initFincode: FincodeLoaderFn = (publicKey, arg) => {
+export const initFincode: FincodeLoaderFn = (publicKey, isProduction, config) => {
     const fincodePromise = () => new Promise<FincodeInstance |null>((resolve, reject) => {
         if (typeof window === "undefined") {
             resolve(null)
@@ -67,7 +64,7 @@ export const initFincode: FincodeLoaderFn = (publicKey, arg) => {
         const initializer = window.Fincode
 
         if (initializer) {
-            if (arg && arg.config) {
+            if (config) {
                 console.warn(ALREADY_SCRIPT_LOADED_MESSAGE)
             }
 
@@ -78,13 +75,11 @@ export const initFincode: FincodeLoaderFn = (publicKey, arg) => {
         try {
             let script = findFincodeScript()
             if (script) {
-                if (arg && arg.config) {
+                if (config) {
                     console.warn("fincode.js is already loaded. Config will be ignored.")
                 }
             } else {
-                script = injectFincodeScript(
-                    (arg)? arg.isProduction : undefined,
-                    (arg)? arg.config : undefined,
+                script = injectFincodeScript(isProduction,config,
                 )
             }
 
