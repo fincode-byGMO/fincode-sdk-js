@@ -1,6 +1,6 @@
-import { Card } from "../api/card";
-import { Payment } from "../api/payment";
-import { Token } from "../api/token";
+import * as Card from "../api/card";
+import * as Payment from "../api/payment";
+import * as Token from "../api/token";
 import { Appearance, FincodeUI } from "./ui";
 
 export type FincodeInitializer = (apiKey: string) => FincodeInstance
@@ -13,7 +13,7 @@ export type FincodeInstance = {
             holder_name?: string,
             number?: number,
         },
-        callback: (status: number, response: Token.IssuingResponse) => void,
+        callback: (status: number, response: Token.TokenIssuingResponse) => void,
         errorCallback: () => void,
     ) => void
 
@@ -48,6 +48,6 @@ export type FincodeInstance = {
         callback: (status: number, response: Payment.PaymentObject) => void,
         errorCallback: () => void,
     ) => void
-        
+
     ui: (appearance: Appearance) => FincodeUI
 }

@@ -1,9 +1,5 @@
-import { APIErrorResponse } from "./api/api";
-import { Card } from "./api/card";
-import { Payment } from "./api/payment";
-import { Token } from "./api/token";
-import { FincodeInstance } from "./js/fincode";
-import { FincodeUI } from "./js/ui";
+import { APIErrorResponse, CardObject, PaymentObject, TokenIssuingResponse } from "./api";
+import { FincodeInstance, FincodeUI } from "./js";
 
 /**
  * 
@@ -20,56 +16,56 @@ export const executePayment = (
     id: Parameters<FincodeInstance["payments"]>[0]["id"],
     pay_type: Parameters<FincodeInstance["payments"]>[0]["pay_type"],
     access_id: Parameters<FincodeInstance["payments"]>[0]["access_id"],
-    
+
     use: {
         ui?: FincodeUI,
         customer_id?: Parameters<FincodeInstance["payments"]>[0]["customer_id"],
         card_id?: Parameters<FincodeInstance["payments"]>[0]["card_id"],
     }
-) => new Promise<Payment.PaymentObject>((resolve, reject) => {
-        if (use.ui && (use.customer_id || use.card_id)) {
-            reject(new Error("Can't use both ui and (customer_id or card_id)"));
-            return;
-        }
-
-        if (use.ui) {
-            use.ui.getFormData().then((formData) => {
-                const transaction: Parameters<FincodeInstance["payments"]>[0] = {
-                    pay_type: pay_type,
-                    access_id: access_id,
-                    id: id,
-                    card_no: formData.cardNo,
-                    expire: formData.expire,
-                    security_code: formData.CVC,
-                    holder_name: formData.holderName,
-                    method: "1",
-                }
-
-                const onSuccess: Parameters<FincodeInstance["payments"]>[1] = (status, response) => {
-                    if (status === 200) {
-                        resolve(response);
-                        return;
-                    }
-                    reject(response);
-                }
-                const onError: Parameters<FincodeInstance["payments"]>[2] = () => {
-                    const errors: APIErrorResponse = {
-                        errors: [
-                            {
-                                error_code: "-",
-                                error_messaage: "Some error has occured. couldn't execute payment",
-                            },
-                        ]
-                    }
-                    reject(errors);                    
-                }
-
-                fincode.payments(transaction, onSuccess, onError)
-            }).catch((err) => {
-                reject(err);
-            })
-        }
+) => new Promise<PaymentObject>((resolve, reject) => {
+    if (use.ui && (use.customer_id || use.card_id)) {
+        reject(new Error("Can't use both ui and (customer_id or card_id)"));
+        return;
     }
+
+    if (use.ui) {
+        use.ui.getFormData().then((formData) => {
+            const transaction: Parameters<FincodeInstance["payments"]>[0] = {
+                pay_type: pay_type,
+                access_id: access_id,
+                id: id,
+                card_no: formData.cardNo,
+                expire: formData.expire,
+                security_code: formData.CVC,
+                holder_name: formData.holderName,
+                method: "1",
+            }
+
+            const onSuccess: Parameters<FincodeInstance["payments"]>[1] = (status, response) => {
+                if (status === 200) {
+                    resolve(response);
+                    return;
+                }
+                reject(response);
+            }
+            const onError: Parameters<FincodeInstance["payments"]>[2] = () => {
+                const errors: APIErrorResponse = {
+                    errors: [
+                        {
+                            error_code: "-",
+                            error_messaage: "Some error has occured. couldn't execute payment",
+                        },
+                    ]
+                }
+                reject(errors);
+            }
+
+            fincode.payments(transaction, onSuccess, onError)
+        }).catch((err) => {
+            reject(err);
+        })
+    }
+}
 )
 
 /**
@@ -81,10 +77,10 @@ export const executePayment = (
  * @returns 
  */
 export const getCardToken = (
-    fincode: FincodeInstance ,
+    fincode: FincodeInstance,
     ui: FincodeUI,
     number: number = 1,
-) => new Promise<Token.IssuingResponse>((resolve, reject) => {
+) => new Promise<TokenIssuingResponse>((resolve, reject) => {
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
             reject(new Error("Card number is undefined"));
@@ -141,7 +137,7 @@ export const registerCard = (
         customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
         useDefault?: boolean,
     }
-) => new Promise<Card.CardObject>((resolve, reject) => {
+) => new Promise<CardObject>((resolve, reject) => {
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
             reject(new Error("Card number is undefined"));
@@ -158,7 +154,7 @@ export const registerCard = (
             expire: formData.expire,
             security_code: formData.CVC,
             holder_name: formData.holderName,
-            default_flag: arg.useDefault? "1": "0",
+            default_flag: arg.useDefault ? "1" : "0",
         }
 
         const onSuccess: Parameters<FincodeInstance["cards"]>[1] = (status, response) => {
@@ -201,12 +197,12 @@ export const updateCard = (
         customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"],
         useDefault?: true,
     }
-) => new Promise<Card.CardObject>((resolve, reject) => {
+) => new Promise<CardObject>((resolve, reject) => {
     ui.getFormData().then((formData) => {
         const card: Parameters<FincodeInstance["cards"]>[0] = {
             card_id: arg.cardId,
             customer_id: arg.customerId,
-            default_flag : arg.useDefault? "1": undefined,
+            default_flag: arg.useDefault ? "1" : undefined,
             holder_name: formData.holderName,
             security_code: formData.CVC,
         }
@@ -230,6 +226,6 @@ export const updateCard = (
             reject(errors);
         }
 
-        fincode.cards(card,onSuccess,onError)
+        fincode.cards(card, onSuccess, onError)
     })
 })
