@@ -16,6 +16,7 @@
         "forceConsistentCasingInFileNames": true,
         "lib": [
             "DOM",
+            "ESNext"
         ],
         "paths": {
             "~/*": ["./*"]

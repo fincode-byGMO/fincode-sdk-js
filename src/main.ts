@@ -5,8 +5,9 @@ const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js"
 const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/
 
 export type FincodeConfig = {}
+export type FincodeEnv = "test" | "live"
 
-export type FincodeLoaderFn = (publicKey: string, isProduction?: boolean, config?: FincodeConfig) => Promise<FincodeInstance>
+export type FincodeLoaderFn = (publicKey: string, env?: FincodeEnv, config?: FincodeConfig) => Promise<FincodeInstance>
 
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
@@ -24,7 +25,7 @@ const findFincodeScript = (): HTMLScriptElement | null => {
     return null
 }
 
-const injectFincodeScript = (isProduction?: boolean, config?: FincodeConfig): HTMLScriptElement => {
+const injectFincodeScript = (env?: FincodeEnv, config?: FincodeConfig): HTMLScriptElement => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined")
     }
@@ -33,7 +34,7 @@ const injectFincodeScript = (isProduction?: boolean, config?: FincodeConfig): HT
 
     const script = document.createElement("script")
     const param = queryParam ? `?${queryParam}` : ""
-    script.src = isProduction ? `${V1_URL_PROD}${param}` : `${V1_URL_TEST}${param}`
+    script.src = env == "live" ? `${V1_URL_PROD}${param}` : `${V1_URL_TEST}${param}`
 
     const injectTarget = document.head || document.body
 
@@ -54,15 +55,15 @@ const buildQueryParam = (config?: FincodeConfig): string => {
 
 const ALREADY_SCRIPT_LOADED_MESSAGE = "fincode.js is already loaded. Config will be ignored."
 
+
 /**
  * initialize fincode.js and return fincode instance
  * 
- * @param publicKey 
- * @param isProduction 
- * @param config 
- * @returns {Promise<FincodeInstance>}
+ * @param {string} publicKey public key
+ * @param {string} env environment - `test` or `live`
+ * @param {Object} config config
  */
-export const initFincode: FincodeLoaderFn = (publicKey, isProduction, config) => {
+export const initFincode: FincodeLoaderFn = (publicKey: string, env?: FincodeEnv, config?: FincodeConfig) => {
     const fincodePromise = new Promise<FincodeInstance>((resolve, reject) => {
         if (typeof window === "undefined") {
             reject(new Error("window is undefined"))
@@ -87,7 +88,7 @@ export const initFincode: FincodeLoaderFn = (publicKey, isProduction, config) =>
                     console.warn("fincode.js is already loaded. Config will be ignored.")
                 }
             } else {
-                script = injectFincodeScript(isProduction, config,
+                script = injectFincodeScript(env, config,
                 )
             }
 
