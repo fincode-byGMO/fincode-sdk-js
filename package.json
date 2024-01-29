@@ -1,11 +1,15 @@
 {
-  "name": "fincode-js",
+  "name": "@epsilon-web/fincode-js-test",
   "version": "0.0.0",
   "main": "main.js",
   "types": "main.d.ts",
   "author": "GMO Epsilon, Inc.",
   "license": "MIT",
   "private": false,
+  "repository": {
+    "type": "git",
+    "url": "https://github.backstage-gen2.gmo-pg.com/epsilon-web/fincode-js-sdk.git"
+  },
   "devDependencies": {
     "@types/jest": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
