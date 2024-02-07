@@ -10,6 +10,7 @@
     "type": "git",
     "url": "https://github.backstage-gen2.gmo-pg.com/epsilon-web/fincode-js-sdk.git"
   },
+  "packageManager": "pnpm@8.15.1",
   "devDependencies": {
     "@types/jest": "^29.0.0",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
