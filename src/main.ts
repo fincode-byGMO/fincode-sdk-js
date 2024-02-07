@@ -62,7 +62,7 @@ export const initFincode: FincodeLoaderFn = (initArgs) => {
         throw new Error("publicKey is required")
     }
 
-    if (typeof initArgs.isLiveMode === "boolean") {
+    if (typeof initArgs.isLiveMode !== "boolean" && initArgs.isLiveMode !== undefined) {
         throw new Error("isLiveMode must be a boolean")
     }
 
