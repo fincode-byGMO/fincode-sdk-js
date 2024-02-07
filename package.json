@@ -1,6 +1,6 @@
 {
   "name": "@epsilon-web/fincode-js-test",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "main": "./dist/main.js",
   "types": "./dist/main.d.ts",
   "author": "GMO Epsilon, Inc.",
@@ -23,7 +23,7 @@
   },
   "files": [
     "dist",
-    "README.md",
+    "README.md"
   ],
   "scripts": {
     "build": "tsc",

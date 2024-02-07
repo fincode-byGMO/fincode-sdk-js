@@ -1,13 +1,15 @@
-import { FincodeInitializer, FincodeInstance } from "./js/fincode"
+import { FincodeInstance } from "./js/fincode"
 
 const V1_URL_TEST = "https://js.test.fincode.jp/v1/fincode.js"
 const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js"
 const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/
 
-export type FincodeConfig = {}
 export type FincodeEnv = "test" | "live"
 
-export type FincodeLoaderFn = (publicKey: string, env?: FincodeEnv, config?: FincodeConfig) => Promise<FincodeInstance>
+export type FincodeLoaderFn = (initArgs: {
+    publicKey: string,
+    isLiveMode?: boolean,
+}) => Promise<FincodeInstance>
 
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
@@ -25,16 +27,16 @@ const findFincodeScript = (): HTMLScriptElement | null => {
     return null
 }
 
-const injectFincodeScript = (env?: FincodeEnv, config?: FincodeConfig): HTMLScriptElement => {
+const injectFincodeScript = (
+    isProduction: boolean,
+): HTMLScriptElement => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined")
     }
 
-    const queryParam = buildQueryParam(config)
 
     const script = document.createElement("script")
-    const param = queryParam ? `?${queryParam}` : ""
-    script.src = env == "live" ? `${V1_URL_PROD}${param}` : `${V1_URL_TEST}${param}`
+    script.src = isProduction ? V1_URL_PROD : V1_URL_TEST
 
     const injectTarget = document.head || document.body
 
@@ -47,23 +49,23 @@ const injectFincodeScript = (env?: FincodeEnv, config?: FincodeConfig): HTMLScri
     return script
 }
 
-const buildQueryParam = (config?: FincodeConfig): string => {
-    const params = new URLSearchParams()
-
-    return params.toString()
-}
-
-const ALREADY_SCRIPT_LOADED_MESSAGE = "fincode.js is already loaded. Config will be ignored."
-
 
 /**
  * initialize fincode.js and return fincode instance
  * 
- * @param {string} publicKey public key
- * @param {string} env environment - `test` or `live`
- * @param {Object} config config
+ * @param initArgs - initialization arguments
+ * @param initArgs.publicKey - public API key for fincode.js
+ * @param initArgs.isLiveMode - whether to use live environment. If true, it will use live environment. Otherwise, it will use test environment.
  */
-export const initFincode: FincodeLoaderFn = (publicKey: string, env?: FincodeEnv, config?: FincodeConfig) => {
+export const initFincode: FincodeLoaderFn = (initArgs) => {
+    if (!initArgs.publicKey) {
+        throw new Error("publicKey is required")
+    }
+
+    if (typeof initArgs.isLiveMode === "boolean") {
+        throw new Error("isLiveMode must be a boolean")
+    }
+
     const fincodePromise = new Promise<FincodeInstance>((resolve, reject) => {
         if (typeof window === "undefined") {
             reject(new Error("window is undefined"))
@@ -73,28 +75,19 @@ export const initFincode: FincodeLoaderFn = (publicKey: string, env?: FincodeEnv
         const initializer = window.Fincode
 
         if (initializer) {
-            if (config) {
-                console.warn(ALREADY_SCRIPT_LOADED_MESSAGE)
-            }
-
-            resolve(initializer(publicKey))
+            resolve(initializer(initArgs.publicKey))
             return
         }
 
         try {
             let script = findFincodeScript()
-            if (script) {
-                if (config) {
-                    console.warn("fincode.js is already loaded. Config will be ignored.")
-                }
-            } else {
-                script = injectFincodeScript(env, config,
-                )
+            if (!script) {
+                script = injectFincodeScript(initArgs.isLiveMode || false)
             }
 
             script.addEventListener("load", (evt) => {
                 if (window.Fincode) {
-                    resolve(window.Fincode(publicKey))
+                    resolve(window.Fincode(initArgs.publicKey))
                 } else {
                     reject(new Error("fincode.js is not available"))
                 }
