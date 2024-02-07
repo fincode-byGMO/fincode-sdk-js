@@ -1,8 +1,8 @@
 {
   "name": "@epsilon-web/fincode-js-test",
   "version": "0.0.0",
-  "main": "main.js",
-  "types": "main.d.ts",
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
   "author": "GMO Epsilon, Inc.",
   "license": "MIT",
   "private": false,
