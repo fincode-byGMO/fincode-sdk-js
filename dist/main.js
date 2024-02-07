@@ -13,14 +13,12 @@ const findFincodeScript = () => {
     }
     return null;
 };
-const injectFincodeScript = (isProduction, config) => {
+const injectFincodeScript = (isProduction) => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined");
     }
-    const queryParam = buildQueryParam(config);
     const script = document.createElement("script");
-    const param = queryParam ? `?${queryParam}` : "";
-    script.src = isProduction ? `${V1_URL_PROD}${param}` : `${V1_URL_TEST}${param}`;
+    script.src = isProduction ? V1_URL_PROD : V1_URL_TEST;
     const injectTarget = document.head || document.body;
     if (!injectTarget) {
         throw new Error("Either head or body must be present");
@@ -28,38 +26,38 @@ const injectFincodeScript = (isProduction, config) => {
     injectTarget.appendChild(script);
     return script;
 };
-const buildQueryParam = (config) => {
-    const params = new URLSearchParams();
-    return params.toString();
-};
-const ALREADY_SCRIPT_LOADED_MESSAGE = "fincode.js is already loaded. Config will be ignored.";
-export const initFincode = (publicKey, isProduction, config) => {
-    const fincodePromise = () => new Promise((resolve, reject) => {
+/**
+ * initialize fincode.js and return fincode instance
+ *
+ * @param initArgs - initialization arguments
+ * @param initArgs.publicKey - public API key for fincode.js
+ * @param initArgs.isLiveMode - whether to use live environment. If true, it will use live environment. Otherwise, it will use test environment.
+ */
+export const initFincode = (initArgs) => {
+    if (!initArgs.publicKey) {
+        throw new Error("publicKey is required");
+    }
+    if (typeof initArgs.isLiveMode !== "boolean" && initArgs.isLiveMode !== undefined) {
+        throw new Error("isLiveMode must be a boolean");
+    }
+    const fincodePromise = new Promise((resolve, reject) => {
         if (typeof window === "undefined") {
-            resolve(null);
+            reject(new Error("window is undefined"));
             return;
         }
         const initializer = window.Fincode;
         if (initializer) {
-            if (config) {
-                console.warn(ALREADY_SCRIPT_LOADED_MESSAGE);
-            }
-            resolve(initializer(publicKey));
+            resolve(initializer(initArgs.publicKey));
             return;
         }
         try {
             let script = findFincodeScript();
-            if (script) {
-                if (config) {
-                    console.warn("fincode.js is already loaded. Config will be ignored.");
-                }
-            }
-            else {
-                script = injectFincodeScript(isProduction, config);
+            if (!script) {
+                script = injectFincodeScript(initArgs.isLiveMode || false);
             }
             script.addEventListener("load", (evt) => {
                 if (window.Fincode) {
-                    resolve(window.Fincode(publicKey));
+                    resolve(window.Fincode(initArgs.publicKey));
                 }
                 else {
                     reject(new Error("fincode.js is not available"));

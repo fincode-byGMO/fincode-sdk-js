@@ -1,8 +1,5 @@
-import { Card } from "./api/card";
-import { Payment } from "./api/payment";
-import { Token } from "./api/token";
-import { FincodeInstance } from "./js/fincode";
-import { FincodeUI } from "./js/ui";
+import { CardObject, PaymentObject, TokenIssuingResponse } from "./api";
+import { FincodeInstance, FincodeUI } from "./js";
 /**
  *
  * @param fincode instance of fincode
@@ -16,7 +13,7 @@ export declare const executePayment: (fincode: FincodeInstance, id: Parameters<F
     ui?: FincodeUI;
     customer_id?: Parameters<FincodeInstance["payments"]>[0]["customer_id"];
     card_id?: Parameters<FincodeInstance["payments"]>[0]["card_id"];
-}) => Promise<Payment.PaymentObject>;
+}) => Promise<PaymentObject>;
 /**
  * get card token with data inputed in mounted ui
  *
@@ -25,7 +22,7 @@ export declare const executePayment: (fincode: FincodeInstance, id: Parameters<F
  * @param {number} number number of token to be issued
  * @returns
  */
-export declare const getCardToken: (fincode: FincodeInstance, ui: FincodeUI, number?: number) => Promise<Token.IssuingResponse>;
+export declare const getCardToken: (fincode: FincodeInstance, ui: FincodeUI, number?: number) => Promise<TokenIssuingResponse>;
 /**
  *
  * @param fincode fincode instance
@@ -37,7 +34,7 @@ export declare const getCardToken: (fincode: FincodeInstance, ui: FincodeUI, num
 export declare const registerCard: (fincode: FincodeInstance, ui: FincodeUI, arg: {
     customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"];
     useDefault?: boolean;
-}) => Promise<Card.CardObject>;
+}) => Promise<CardObject>;
 /**
  *
  * @param fincode fincode instance
@@ -51,5 +48,5 @@ export declare const updateCard: (fincode: FincodeInstance, ui: FincodeUI, arg: 
     cardId: string;
     customerId: Parameters<FincodeInstance["cards"]>[0]["customer_id"];
     useDefault?: true;
-}) => Promise<Card.CardObject>;
+}) => Promise<CardObject>;
 //# sourceMappingURL=util.d.ts.map
