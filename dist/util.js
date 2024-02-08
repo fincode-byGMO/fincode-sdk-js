@@ -1,28 +1,29 @@
 /**
  *
- * @param fincode instance of fincode
- * @param id Order ID
- * @param pay_type payment method type
- * @param access_id Access ID
- * @param use specify how to execute payment, either using ui or using customer_id and card_id
+ * @param {FincodeInstance} fincode instance of fincode
+ * @param {string} id Order ID
+ * @param {string} payType payment method type
+ * @param {string} accessId Access ID
+ * @param {string|undefined} ui UI that has been already mounted
+ * @param {object|undefined} args arguments to be used in payment. (customerId, cardId, method)
  * @returns {Promise<Payment.PaymentObject>}
  */
-export const executePayment = (fincode, id, pay_type, access_id, use) => new Promise((resolve, reject) => {
-    if (use.ui && (use.customer_id || use.card_id)) {
-        reject(new Error("Can't use both ui and (customer_id or card_id)"));
+export const executePayment = (fincode, id, payType, accessId, ui, args) => new Promise((resolve, reject) => {
+    if (ui && args) {
+        reject(new Error("Can't use both ui and (customer_id,card_id or method)"));
         return;
     }
-    if (use.ui) {
-        use.ui.getFormData().then((formData) => {
+    if (ui) {
+        ui.getFormData().then((formData) => {
             const transaction = {
-                pay_type: pay_type,
-                access_id: access_id,
+                pay_type: payType,
+                access_id: accessId,
                 id: id,
                 card_no: formData.cardNo,
                 expire: formData.expire,
                 security_code: formData.CVC,
                 holder_name: formData.holderName,
-                method: "1",
+                method: formData.method,
             };
             const onSuccess = (status, response) => {
                 if (status === 200) {
@@ -46,6 +47,39 @@ export const executePayment = (fincode, id, pay_type, access_id, use) => new Pro
         }).catch((err) => {
             reject(err);
         });
+    }
+    else if (args) {
+        const transaction = {
+            pay_type: payType,
+            access_id: accessId,
+            id: id,
+            customer_id: args.customerId,
+            card_id: args.cardId,
+            method: args.method || "1",
+        };
+        const onSuccess = (status, response) => {
+            if (status === 200) {
+                resolve(response);
+                return;
+            }
+            reject(response);
+        };
+        const onError = () => {
+            const errors = {
+                errors: [
+                    {
+                        error_code: "-",
+                        error_messaage: "Some error has occured. couldn't execute payment",
+                    },
+                ]
+            };
+            reject(errors);
+        };
+        fincode.payments(transaction, onSuccess, onError);
+    }
+    else {
+        reject(new Error("ui or (customer_id,card_id or method) must be provided"));
+        return;
     }
 });
 /**
@@ -96,13 +130,13 @@ export const getCardToken = (fincode, ui, number = "1") => new Promise((resolve,
 });
 /**
  *
- * @param fincode fincode instance
- * @param ui ui that has been already initialized
- * @param customerId Customer ID who owns the card
- * @param useDefault Use this card by default or not
+ * @param {FincodeInstance} fincode fincode instance
+ * @param {FincodeUI} ui ui that has been already initialized
+ * @param {string} customerId Customer ID who owns the card
+ * @param {boolean} useDefault Use this card by default or not
  * @returns
  */
-export const registerCard = (fincode, ui, arg) => new Promise((resolve, reject) => {
+export const registerCard = (fincode, ui, customerId, useDefault) => new Promise((resolve, reject) => {
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
             reject(new Error("Card number is undefined"));
@@ -113,12 +147,12 @@ export const registerCard = (fincode, ui, arg) => new Promise((resolve, reject) 
             return;
         }
         const card = {
-            customer_id: arg.customerId,
+            customer_id: customerId,
             card_no: formData.cardNo,
             expire: formData.expire,
             security_code: formData.CVC,
             holder_name: formData.holderName,
-            default_flag: arg.useDefault ? "1" : "0",
+            default_flag: useDefault ? "1" : "0",
         };
         const onSuccess = (status, response) => {
             if (status === 200) {
@@ -145,17 +179,17 @@ export const registerCard = (fincode, ui, arg) => new Promise((resolve, reject) 
  *
  * @param fincode fincode instance
  * @param ui ui that has been already initialized
- * @param cardId Card ID to be updated
+ * @param id Card ID to be updated
  * @param customerId Customer ID who owns the card
  * @param useDefault Use this card by default
  * @returns
  */
-export const updateCard = (fincode, ui, arg) => new Promise((resolve, reject) => {
+export const updateCard = (fincode, ui, id, customerId, useDefault) => new Promise((resolve, reject) => {
     ui.getFormData().then((formData) => {
         const card = {
-            card_id: arg.cardId,
-            customer_id: arg.customerId,
-            default_flag: arg.useDefault ? "1" : undefined,
+            card_id: id,
+            customer_id: customerId,
+            default_flag: useDefault ? "1" : undefined,
             holder_name: formData.holderName,
             security_code: formData.CVC,
         };

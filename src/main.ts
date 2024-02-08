@@ -28,7 +28,7 @@ const findFincodeScript = (): HTMLScriptElement | null => {
 }
 
 const injectFincodeScript = (
-    isProduction: boolean,
+    isLiveMode: boolean,
 ): HTMLScriptElement => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined")
@@ -36,7 +36,7 @@ const injectFincodeScript = (
 
 
     const script = document.createElement("script")
-    script.src = isProduction ? V1_URL_PROD : V1_URL_TEST
+    script.src = isLiveMode ? V1_URL_PROD : V1_URL_TEST
 
     const injectTarget = document.head || document.body
 
