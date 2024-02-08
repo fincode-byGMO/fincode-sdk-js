@@ -50,4 +50,8 @@ export type FincodeInstance = {
     ) => void
 
     ui: (appearance: Appearance) => FincodeUI
+
+    setTenantShopId: (tenantShopId: string) => void
+
+    setIdempotentKey: (idempotencyKey: string) => void
 }
