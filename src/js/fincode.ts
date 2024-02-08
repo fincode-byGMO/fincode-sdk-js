@@ -11,7 +11,7 @@ export type FincodeInstance = {
             expire: string,
             security_code?: string,
             holder_name?: string,
-            number?: number,
+            number?: string,
         },
         callback: (status: number, response: Token.TokenIssuingResponse) => void,
         errorCallback: () => void,

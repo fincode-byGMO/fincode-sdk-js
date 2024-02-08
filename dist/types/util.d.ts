@@ -19,10 +19,10 @@ export declare const executePayment: (fincode: FincodeInstance, id: Parameters<F
  *
  * @param {FincodeInstance} fincode instance of fincode
  * @param {FincodeUI} ui ui that has been already initialized
- * @param {number} number number of token to be issued
+ * @param {string} number number of token to be issued. (type: string, default: `"1"`)
  * @returns
  */
-export declare const getCardToken: (fincode: FincodeInstance, ui: FincodeUI, number?: number) => Promise<TokenIssuingResponse>;
+export declare const getCardToken: (fincode: FincodeInstance, ui: FincodeUI, number?: string) => Promise<TokenIssuingResponse>;
 /**
  *
  * @param fincode fincode instance

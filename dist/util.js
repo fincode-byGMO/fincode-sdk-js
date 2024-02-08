@@ -53,10 +53,10 @@ export const executePayment = (fincode, id, pay_type, access_id, use) => new Pro
  *
  * @param {FincodeInstance} fincode instance of fincode
  * @param {FincodeUI} ui ui that has been already initialized
- * @param {number} number number of token to be issued
+ * @param {string} number number of token to be issued. (type: string, default: `"1"`)
  * @returns
  */
-export const getCardToken = (fincode, ui, number = 1) => new Promise((resolve, reject) => {
+export const getCardToken = (fincode, ui, number = "1") => new Promise((resolve, reject) => {
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
             reject(new Error("Card number is undefined"));
