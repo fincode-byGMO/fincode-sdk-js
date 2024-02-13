@@ -2,21 +2,23 @@ const V1_URL_TEST = "https://js.test.fincode.jp/v1/fincode.js";
 const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js";
 const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/;
 const findFincodeScript = () => {
-    if (typeof document === "undefined") return null;
+    if (typeof document === "undefined")
+        return null;
     const scripts = document.querySelectorAll(`script[src^="${V1_URL_REGEXP}"`);
     for (let i = 0; i < scripts.length; i++) {
         const script = scripts[i];
-        if (!V1_URL_REGEXP.test(script.src)) continue;
+        if (!V1_URL_REGEXP.test(script.src))
+            continue;
         return script;
     }
     return null;
 };
-const injectFincodeScript = (isProduction) => {
+const injectFincodeScript = (isLiveMode) => {
     if (typeof document === "undefined") {
         throw new Error("document is undefined");
     }
     const script = document.createElement("script");
-    script.src = isProduction ? V1_URL_PROD : V1_URL_TEST;
+    script.src = isLiveMode ? V1_URL_PROD : V1_URL_TEST;
     const injectTarget = document.head || document.body;
     if (!injectTarget) {
         throw new Error("Either head or body must be present");
@@ -35,10 +37,7 @@ export const initFincode = (initArgs) => {
     if (!initArgs.publicKey) {
         throw new Error("publicKey is required");
     }
-    if (
-        typeof initArgs.isLiveMode !== "boolean" &&
-        initArgs.isLiveMode !== undefined
-    ) {
+    if (typeof initArgs.isLiveMode !== "boolean" && initArgs.isLiveMode !== undefined) {
         throw new Error("isLiveMode must be a boolean");
     }
     const fincodePromise = new Promise((resolve, reject) => {
@@ -47,29 +46,28 @@ export const initFincode = (initArgs) => {
             return;
         }
         const initializer = window.Fincode;
-        console.log({ initializer: initializer });
         if (initializer) {
             resolve(initializer(initArgs.publicKey));
             return;
         }
         try {
             let script = findFincodeScript();
-
-            console.log({ script: script });
             if (!script) {
                 script = injectFincodeScript(initArgs.isLiveMode || false);
             }
             script.addEventListener("load", (evt) => {
                 if (window.Fincode) {
                     resolve(window.Fincode(initArgs.publicKey));
-                } else {
+                }
+                else {
                     reject(new Error("fincode.js is not available"));
                 }
             });
             script.addEventListener("error", (evt) => {
                 reject(new Error("Cannot load fincode.js"));
             });
-        } catch (e) {
+        }
+        catch (e) {
             reject(e);
         }
     });
