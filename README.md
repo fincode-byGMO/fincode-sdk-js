@@ -41,7 +41,7 @@ const main = async () => {
 
     // mount fincode payment UI form
     const ui = fincode.ui({ layout: "vertical" })
-    ui.create("payment")
+    ui.create("payment", { layout: "vertical" })
     ui.mount("#fincode", "400")
 
     // get card token
