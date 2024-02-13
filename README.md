@@ -48,8 +48,8 @@ const main = async () => {
     const const onSubmit = async (e) => {
         e.preventDefault()
 
-        const response = await getCardToken(fincode, ui)
-        const token = res.list[0].token
+        const response = await getCardToken(fincode, ui, "4")
+        const tokens = response.list // expect 4 tokens
 
         // Process something with token.
     }
