@@ -34,5 +34,7 @@ export type FincodeInstance = {
         holder_name?: string;
     }, callback: (status: number, response: Payment.PaymentObject) => void, errorCallback: () => void) => void;
     ui: (appearance: Appearance) => FincodeUI;
+    setTenantShopId: (tenantShopId: string) => void;
+    setIdempotentKey: (idempotencyKey: string) => void;
 };
 //# sourceMappingURL=fincode.d.ts.map
