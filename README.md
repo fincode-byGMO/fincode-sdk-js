@@ -80,7 +80,7 @@ import { executePayment } from "@fincode/js"
         args: { 
             "<Customer ID>", // customer id (string)
             "<Card ID>", // card id (string)
-            "1", // pay method ("1" | "2"): Refer `pay_method` of request body of PUT /v1/payments/{id}
+            "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
         }
     )
 })()
@@ -100,7 +100,7 @@ import { getCardToken } from "@fincode/js"
         ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
         "4" // how many tokens you want to get (string, default: "1")
     )
-    const tokens = res.list // there are 4 tokens in the list.
+    const tokens = res.list // there are 4 tokens in this array.
 })()
 ```
 
