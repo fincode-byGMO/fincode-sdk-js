@@ -78,9 +78,9 @@ import { executePayment } from "@fincode/js"
         
         /* or you can call by custom data */
         args: { 
-            "<Customer ID>", // customer id (string)
-            "<Card ID>", // card id (string)
-            "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
+            customerId: "<Customer ID>", // customer id (string)
+            cardId: "<Card ID>", // card id (string)
+            mehtod: "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
         }
     )
 })()
