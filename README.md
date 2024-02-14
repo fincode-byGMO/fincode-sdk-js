@@ -133,7 +133,7 @@ import { updateCard } from "@fincode/js"
         fincode, // fincode instance (FincodeInstance)
         ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
         "<Card ID>", // card id to update (string)
-        "<Customer ID>", // card id to update (string)
+        "<Customer ID>", // customer id who has the card (string)
         true, // use the card as default card (boolean)
     )
 })()
