@@ -113,21 +113,3 @@ import { registerCard } from "@fincode/js"
     })
 })()
 ```
-
-### `updateCard`
-UIコンポーネントに入力されているカード情報をもとにカード情報を更新します。
-Promiseを返し、解決時には更新されたカードオブジェクト（`CardObject`）を返します。
-
-```ts
-import { updateCard } from "@fincode/js"
-
-(async () => {
-    const card = await updateCard({
-        fincode: fincode, // fincode instance (FincodeInstance)
-        ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
-        cardId: "<Card ID>", // card id to update (string)
-        customerId: "<Customer ID>", // customer id who has the card (string)
-        useDefault: true, // use the card as default card (boolean)
-    })
-})()
-```
