@@ -42,7 +42,7 @@ const main = async () => {
     // mount fincode payment UI form
     const ui = fincode.ui({ layout: "vertical" })
     ui.create("payment", { layout: "vertical" })
-    ui.mount("#fincode", "400")
+    ui.mount("fincode", "400")
 
     // get card token
     const const onSubmit = async (e) => {
@@ -68,21 +68,21 @@ Promiseを返し、解決時には決済オブジェクト（`PaymentObject`）�
 import { executePayment } from "@fincode/js"
 
 (async () => {
-    const payment = await executePayment(
-        fincode, // fincode instance (FincodeInstance)
-        id, // order id of payment (string)
-        payType, // payment type (only "Card" is supported now)
-        accessId, // access id of payment (string)
+    const payment = await executePayment({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        id: "<Order ID>", // order id of payment (string)
+        payType: "Card", // payment type (only "Card" is supported now)
+        accessId: "<Access ID>", // access id of payment (string)
         
-        ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
+        ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
         
         /* or you can call by custom data */
-        args: { 
+        customArgs: { 
             customerId: "<Customer ID>", // customer id (string)
             cardId: "<Card ID>", // card id (string)
             mehtod: "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
         }
-    )
+    })
 })()
 
 ```
@@ -95,11 +95,11 @@ Promiseを返し、解決時にはトークン情報を含むデータを返し�
 import { getCardToken } from "@fincode/js"
 
 (async () => {
-    const res = await getCardToken(
-        fincode, // fincode instance (FincodeInstance)
-        ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
-        "4" // how many tokens you want to get (string, default: "1")
-    )
+    const res = await getCardToken({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
+        number: "4" // how many tokens you want to get (string, default: "1")
+    })
     const tokens = res.list // there are 4 tokens in this array.
 })()
 ```
@@ -112,12 +112,12 @@ Promiseを返し、解決時には登録されたカードオブジェクト（`
 import { registerCard } from "@fincode/js"
 
 (async () => {
-    const card = await registerCard(
-        fincode, // fincode instance (FincodeInstance)
-        ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
-        "<Customer ID>", // customer id to register the card (string)
-        true, // use the card as default card (boolean)
-    )
+    const card = await registerCard({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
+        customerId: "<Customer ID>", // customer id to register the card (string)
+        useDefault: true, // use the card as default card (boolean)
+    })
 })()
 ```
 
@@ -129,12 +129,12 @@ Promiseを返し、解決時には更新されたカードオブジェクト（`
 import { updateCard } from "@fincode/js"
 
 (async () => {
-    const card = await updateCard(
-        fincode, // fincode instance (FincodeInstance)
-        ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
-        "<Card ID>", // card id to update (string)
-        "<Customer ID>", // customer id who has the card (string)
-        true, // use the card as default card (boolean)
-    )
+    const card = await updateCard({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
+        cardId: "<Card ID>", // card id to update (string)
+        customerId: "<Customer ID>", // customer id who has the card (string)
+        useDefault: true, // use the card as default card (boolean)
+    })
 })()
 ```
