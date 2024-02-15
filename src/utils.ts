@@ -11,21 +11,19 @@ import { FincodeInstance, FincodeUI } from "./js";
  * 
  * @param {object} args arguments to be used in payment. (customerId, cardId, method)
  * @param {FincodeInstance} args.fincode instance of fincode
+ * @param {FincodeUI|undefined} args.ui UI that has been already mounted
  * @param {string} args.id Order ID
  * @param {string} args.payType payment method type
  * @param {string} args.accessId Access ID
- * @param {FincodeUI|undefined} args.ui UI that has been already mounted
- * @param {object|undefined} args.payment arguments to be used in payment. (customerId, cardId, method)
  * @returns {Promise<PaymentObject>}
  */
 export const executePayment = (args: {
     fincode: FincodeInstance,
+    ui: FincodeUI,
 
     id: Parameters<FincodeInstance["payments"]>[0]["id"],
     payType: Parameters<FincodeInstance["payments"]>[0]["pay_type"],
     accessId: Parameters<FincodeInstance["payments"]>[0]["access_id"],
-
-    ui: FincodeUI,
 }): Promise<PaymentObject> => new Promise<PaymentObject>((resolve, reject) => {
 
     const ui = args.ui;
