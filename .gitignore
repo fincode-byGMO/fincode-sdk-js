@@ -5,6 +5,8 @@
 .nfs*
 .cache
 
+dist
+
 node_modules
 
 .vim
