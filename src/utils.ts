@@ -25,13 +25,7 @@ export const executePayment = (args: {
     payType: Parameters<FincodeInstance["payments"]>[0]["pay_type"],
     accessId: Parameters<FincodeInstance["payments"]>[0]["access_id"],
 
-    ui?: FincodeUI,
-
-    payment?: {
-        customerId?: Parameters<FincodeInstance["payments"]>[0]["customer_id"],
-        cardId?: Parameters<FincodeInstance["payments"]>[0]["card_id"],
-        method?: Parameters<FincodeInstance["payments"]>[0]["method"],
-    }
+    ui: FincodeUI,
 }): Promise<PaymentObject> => new Promise<PaymentObject>((resolve, reject) => {
 
     const ui = args.ui;
@@ -39,59 +33,19 @@ export const executePayment = (args: {
     const id = args.id;
     const payType = args.payType;
     const accessId = args.accessId;
-    const payment = args.payment;
 
-    if (ui && payment) {
-        reject(new FincodeSDKError("Can't use both ui and (customer_id,card_id or method)"));
-        return;
-    }
-
-    if (ui) {
-        ui.getFormData().then((formData) => {
-            const transaction: Parameters<FincodeInstance["payments"]>[0] = {
-                pay_type: payType,
-                access_id: accessId,
-                id: id,
-                card_no: formData.cardNo,
-                card_id: formData.cardId,
-                customer_id: formData.customerId,
-                expire: formData.expire,
-                security_code: formData.CVC,
-                holder_name: formData.holderName,
-                method: formData.method,
-            }
-
-            const onSuccess: Parameters<FincodeInstance["payments"]>[1] = (status, response) => {
-                if (status === 200) {
-                    resolve(response);
-                    return;
-                }
-                reject(response);
-            }
-            const onError: Parameters<FincodeInstance["payments"]>[2] = () => {
-                const errors: APIErrorResponse = {
-                    errors: [
-                        {
-                            error_code: "-",
-                            error_messaage: "Some error has occured. couldn't execute payment",
-                        },
-                    ]
-                }
-                reject(errors);
-            }
-
-            fincode.payments(transaction, onSuccess, onError)
-        }).catch((err) => {
-            reject(err);
-        })
-    } else if (payment) {
+    ui.getFormData().then((formData) => {
         const transaction: Parameters<FincodeInstance["payments"]>[0] = {
             pay_type: payType,
             access_id: accessId,
             id: id,
-            customer_id: payment.customerId,
-            card_id: payment.cardId,
-            method: payment.method || "1",
+            card_no: formData.cardNo,
+            card_id: formData.cardId,
+            customer_id: formData.customerId,
+            expire: formData.expire,
+            security_code: formData.CVC,
+            holder_name: formData.holderName,
+            method: formData.method,
         }
 
         const onSuccess: Parameters<FincodeInstance["payments"]>[1] = (status, response) => {
@@ -102,17 +56,20 @@ export const executePayment = (args: {
             reject(response);
         }
         const onError: Parameters<FincodeInstance["payments"]>[2] = () => {
-            reject(new FincodeSDKError("Some error has occured. couldn't execute payment"));
+            const errors: APIErrorResponse = {
+                errors: [
+                    {
+                        error_code: "-",
+                        error_messaage: "Some error has occured. couldn't execute payment",
+                    },
+                ]
+            }
+            reject(errors);
         }
 
         fincode.payments(transaction, onSuccess, onError)
-    } else {
-        reject(new FincodeSDKError("ui or payment must be provided"));
-        return;
-    }
-}
-)
-
+    })
+})
 /**
  * **getCardToken**
  * 
