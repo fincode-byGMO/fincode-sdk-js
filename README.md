@@ -70,18 +70,11 @@ import { executePayment } from "@fincode/js"
 (async () => {
     const payment = await executePayment({
         fincode: fincode, // fincode instance (FincodeInstance)
-        id: "<Order ID>", // order id of payment (string)
-        payType: "Card", // payment type (only "Card" is supported now)
-        accessId: "<Access ID>", // access id of payment (string)
-        
         ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
-        
-        /* or you can call with custom payment data */
-        payment: { 
-            customerId: "<Customer ID>", // customer id (string)
-            cardId: "<Card ID>", // card id (string)
-            mehtod: "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
-        }
+
+        id: "<Order ID>", // order id of payment (string)
+        payType: "Card", // payment type (only "Card" is supported.)
+        accessId: "<Access ID>", // access id of payment (string)
     })
 })()
 
