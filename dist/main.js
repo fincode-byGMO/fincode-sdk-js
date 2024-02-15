@@ -1,3 +1,4 @@
+import { FincodeSDKError } from "./_utils";
 const V1_URL_TEST = "https://js.test.fincode.jp/v1/fincode.js";
 const V1_URL_PROD = "https://js.fincode.jp/v1/fincode.js";
 const V1_URL_REGEXP = /^https:\/\/js\.(test\.)*fincode\.jp\/v1\/fincode\.js$/;
@@ -15,13 +16,13 @@ const findFincodeScript = () => {
 };
 const injectFincodeScript = (isLiveMode) => {
     if (typeof document === "undefined") {
-        throw new Error("document is undefined");
+        throw new FincodeSDKError("document is undefined");
     }
     const script = document.createElement("script");
     script.src = isLiveMode ? V1_URL_PROD : V1_URL_TEST;
     const injectTarget = document.head || document.body;
     if (!injectTarget) {
-        throw new Error("Either head or body must be present");
+        throw new FincodeSDKError("Either head or body must be present");
     }
     injectTarget.appendChild(script);
     return script;
@@ -35,14 +36,14 @@ const injectFincodeScript = (isLiveMode) => {
  */
 export const initFincode = (initArgs) => {
     if (!initArgs.publicKey) {
-        throw new Error("publicKey is required");
+        throw new FincodeSDKError("publicKey is required");
     }
     if (typeof initArgs.isLiveMode !== "boolean" && initArgs.isLiveMode !== undefined) {
-        throw new Error("isLiveMode must be a boolean");
+        throw new FincodeSDKError("isLiveMode must be a boolean");
     }
     const fincodePromise = new Promise((resolve, reject) => {
         if (typeof window === "undefined") {
-            reject(new Error("window is undefined"));
+            reject(new FincodeSDKError("window is undefined"));
             return;
         }
         const initializer = window.Fincode;
@@ -60,11 +61,11 @@ export const initFincode = (initArgs) => {
                     resolve(window.Fincode(initArgs.publicKey));
                 }
                 else {
-                    reject(new Error("fincode.js is not available"));
+                    reject(new FincodeSDKError("fincode.js is not available"));
                 }
             });
             script.addEventListener("error", (evt) => {
-                reject(new Error("Cannot load fincode.js"));
+                reject(new FincodeSDKError("Cannot load fincode.js"));
             });
         }
         catch (e) {
