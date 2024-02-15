@@ -53,6 +53,8 @@ export const executePayment = (args: {
                 access_id: accessId,
                 id: id,
                 card_no: formData.cardNo,
+                card_id: formData.cardId,
+                customer_id: formData.customerId,
                 expire: formData.expire,
                 security_code: formData.CVC,
                 holder_name: formData.holderName,
@@ -100,20 +102,12 @@ export const executePayment = (args: {
             reject(response);
         }
         const onError: Parameters<FincodeInstance["payments"]>[2] = () => {
-            const errors: APIErrorResponse = {
-                errors: [
-                    {
-                        error_code: "-",
-                        error_messaage: "Some error has occured. couldn't execute payment",
-                    },
-                ]
-            }
-            reject(errors);
+            reject(new FincodeSDKError("Some error has occured. couldn't execute payment"));
         }
 
         fincode.payments(transaction, onSuccess, onError)
     } else {
-        reject(new FincodeSDKError("ui or (customer_id,card_id or method) must be provided"));
+        reject(new FincodeSDKError("ui or payment must be provided"));
         return;
     }
 }
@@ -165,15 +159,7 @@ export const getCardToken = (args: {
             reject(response);
         }
         const onError: Parameters<FincodeInstance["tokens"]>[2] = () => {
-            const errors: APIErrorResponse = {
-                errors: [
-                    {
-                        error_code: "-",
-                        error_messaage: "Some error has occured. couldn't get token",
-                    },
-                ]
-            }
-            reject(errors);
+            reject(new FincodeSDKError("Some error has occured. couldn't issue token"));
         }
 
         fincode.tokens(card, onSuccess, onError);
@@ -231,15 +217,7 @@ export const registerCard = (args: {
             reject(response);
         }
         const onError: Parameters<FincodeInstance["cards"]>[2] = () => {
-            const errors: APIErrorResponse = {
-                errors: [
-                    {
-                        error_code: "-",
-                        error_messaage: "Some error has occured. couldn't register card",
-                    },
-                ]
-            }
-            reject(errors);
+            reject(new FincodeSDKError("Some error has occured. couldn't register card"));
         }
 
         fincode.cards(card, onSuccess, onError);
@@ -293,15 +271,7 @@ export const updateCard = (args: {
             reject(response);
         }
         const onError: Parameters<FincodeInstance["cards"]>[2] = () => {
-            const errors: APIErrorResponse = {
-                errors: [
-                    {
-                        error_code: "-",
-                        error_messaage: "Some error has occured. couldn't update card",
-                    },
-                ]
-            }
-            reject(errors);
+            reject(new FincodeSDKError("Some error has occured. couldn't update card"));
         }
 
         fincode.cards(card, onSuccess, onError)
