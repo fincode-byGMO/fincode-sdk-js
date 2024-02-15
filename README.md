@@ -76,8 +76,8 @@ import { executePayment } from "@fincode/js"
         
         ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
         
-        /* or you can call by custom data */
-        customArgs: { 
+        /* or you can call with custom payment data */
+        payment: { 
             customerId: "<Customer ID>", // customer id (string)
             cardId: "<Card ID>", // card id (string)
             mehtod: "1", // pay method ("1" | "2"): Refer the `method` parameter of request body of PUT /v1/payments/{id}
