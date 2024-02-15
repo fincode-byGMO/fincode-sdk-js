@@ -1,4 +1,4 @@
 export * from "./api"
 export * from "./js"
 export * from "./main"
-export * from "./util"
+export * from "./utils"

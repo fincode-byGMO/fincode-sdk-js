@@ -1,16 +1,29 @@
+import { FincodeSDKError } from "./_utils";
 /**
+ * **executePayment**
  *
- * @param {FincodeInstance} fincode instance of fincode
- * @param {string} id Order ID
- * @param {string} payType payment method type
- * @param {string} accessId Access ID
- * @param {string|undefined} ui UI that has been already mounted
- * @param {object|undefined} args arguments to be used in payment. (customerId, cardId, method)
- * @returns {Promise<Payment.PaymentObject>}
+ * calls payments() method of fincode instance with data input in mounted ui or custom arguments.
+ *
+ * You can use either ui or customArgs. If you use both, it will reject.
+ *
+ * @param {object} args arguments to be used in payment. (customerId, cardId, method)
+ * @param {FincodeInstance} args.fincode instance of fincode
+ * @param {string} args.id Order ID
+ * @param {string} args.payType payment method type
+ * @param {string} args.accessId Access ID
+ * @param {FincodeUI|undefined} args.ui UI that has been already mounted
+ * @param {object|undefined} args.payment arguments to be used in payment. (customerId, cardId, method)
+ * @returns {Promise<PaymentObject>}
  */
-export const executePayment = (fincode, id, payType, accessId, ui, args) => new Promise((resolve, reject) => {
-    if (ui && args) {
-        reject(new Error("Can't use both ui and (customer_id,card_id or method)"));
+export const executePayment = (args) => new Promise((resolve, reject) => {
+    const ui = args.ui;
+    const fincode = args.fincode;
+    const id = args.id;
+    const payType = args.payType;
+    const accessId = args.accessId;
+    const payment = args.payment;
+    if (ui && payment) {
+        reject(new FincodeSDKError("Can't use both ui and (customer_id,card_id or method)"));
         return;
     }
     if (ui) {
@@ -48,14 +61,14 @@ export const executePayment = (fincode, id, payType, accessId, ui, args) => new 
             reject(err);
         });
     }
-    else if (args) {
+    else if (payment) {
         const transaction = {
             pay_type: payType,
             access_id: accessId,
             id: id,
-            customer_id: args.customerId,
-            card_id: args.cardId,
-            method: args.method || "1",
+            customer_id: payment.customerId,
+            card_id: payment.cardId,
+            method: payment.method || "1",
         };
         const onSuccess = (status, response) => {
             if (status === 200) {
@@ -78,26 +91,32 @@ export const executePayment = (fincode, id, payType, accessId, ui, args) => new 
         fincode.payments(transaction, onSuccess, onError);
     }
     else {
-        reject(new Error("ui or (customer_id,card_id or method) must be provided"));
+        reject(new FincodeSDKError("ui or (customer_id,card_id or method) must be provided"));
         return;
     }
 });
 /**
- * get card token with data inputed in mounted ui
+ * **getCardToken**
  *
- * @param {FincodeInstance} fincode instance of fincode
- * @param {FincodeUI} ui ui that has been already initialized
- * @param {string} number number of token to be issued. (type: string, default: `"1"`)
- * @returns
+ * calls tokens() method of fincode instance with data input in mounted ui or custom arguments.
+ *
+ * @param {object} args arguments object
+ * @param {FincodeInstance} args.fincode instance of fincode
+ * @param {FincodeUI} args.ui ui that has been already initialized
+ * @param {string} args.number number of token to be issued. (type: string, default: `"1"`)
+ * @returns {Promise<TokenIssuingResponse>}
  */
-export const getCardToken = (fincode, ui, number = "1") => new Promise((resolve, reject) => {
+export const getCardToken = (args) => new Promise((resolve, reject) => {
+    const fincode = args.fincode;
+    const ui = args.ui;
+    const number = args.number || "1";
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
-            reject(new Error("Card number is undefined"));
+            reject(new FincodeSDKError("Card number is undefined"));
             return;
         }
         if (typeof formData.expire === "undefined") {
-            reject(new Error("Expire date is undefined"));
+            reject(new FincodeSDKError("Expire date is undefined"));
             return;
         }
         const card = {
@@ -129,21 +148,29 @@ export const getCardToken = (fincode, ui, number = "1") => new Promise((resolve,
     });
 });
 /**
+ * **registerCard**
  *
- * @param {FincodeInstance} fincode fincode instance
- * @param {FincodeUI} ui ui that has been already initialized
- * @param {string} customerId Customer ID who owns the card
- * @param {boolean} useDefault Use this card by default or not
- * @returns
+ * calls cards() method of fincode instance with data input in mounted ui or custom arguments.
+ *
+ * @param {object} args arguments object
+ * @param {FincodeInstance} args.fincode fincode instance
+ * @param {FincodeUI} args.ui ui that has been already initialized
+ * @param {string} args.customerId Customer ID who owns the card
+ * @param {boolean} args.useDefault Use this card by default or not (default: false)
+ * @returns {Promise<CardObject>}
  */
-export const registerCard = (fincode, ui, customerId, useDefault) => new Promise((resolve, reject) => {
+export const registerCard = (args) => new Promise((resolve, reject) => {
+    const fincode = args.fincode;
+    const ui = args.ui;
+    const customerId = args.customerId;
+    const useDefault = args.useDefault || false;
     ui.getFormData().then((formData) => {
         if (typeof formData.cardNo === "undefined") {
-            reject(new Error("Card number is undefined"));
+            reject(new FincodeSDKError("Card number is undefined"));
             return;
         }
         if (typeof formData.expire === "undefined") {
-            reject(new Error("Expire date is undefined"));
+            reject(new FincodeSDKError("Expire date is undefined"));
             return;
         }
         const card = {
@@ -176,15 +203,27 @@ export const registerCard = (fincode, ui, customerId, useDefault) => new Promise
     });
 });
 /**
+ * **updateCard*
  *
- * @param fincode fincode instance
- * @param ui ui that has been already initialized
- * @param id Card ID to be updated
- * @param customerId Customer ID who owns the card
- * @param useDefault Use this card by default
- * @returns
+ * calls cards() method of fincode instance with data input in mounted ui or custom arguments.
+ *
+ * You can use either ui or customArgs. If you use both, it will reject.
+ *
+ * @param {object} args arguments object
+ * @param {FincodeInstance} args.fincode fincode instance
+ * @param {FincodeUI} args.ui ui that has been already initialized
+ * @param {string} args.id Card ID to be updated
+ * @param {string} args.customerId Customer ID who owns the card
+ * @param {boolean} args.useDefault Use this card by default or not (default: false)
+ *
+ * @returns {Promise<CardObject>}
  */
-export const updateCard = (fincode, ui, id, customerId, useDefault) => new Promise((resolve, reject) => {
+export const updateCard = (args) => new Promise((resolve, reject) => {
+    const fincode = args.fincode;
+    const ui = args.ui;
+    const id = args.id;
+    const customerId = args.customerId;
+    const useDefault = args.useDefault || false;
     ui.getFormData().then((formData) => {
         const card = {
             card_id: id,
