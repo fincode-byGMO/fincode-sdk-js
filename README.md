@@ -2,7 +2,7 @@
 
 fincode for ESModulesはJavaScript/TypeScriptプロジェクトにおけるfincodeJSの呼び出しを支援するラッパーライブラリです。 fincodeJSのロードを簡略化し、ヘルパー関数とTypeScriptの型定義を提供します。
 
-このライブラリはクライアントサイドJavaScriptプロジェクトでの利用を想定しています。 Node.js環境下でfincodeを利用する場合は[fincode for Node.JS]()を利用できます。
+このライブラリはクライアントサイドJavaScriptプロジェクトでの利用を想定しています。 Node.js環境下でfincodeを利用する場合は[fincode for Node.JS](https://github.com/fincode-byGMO/fincode-sdk-node.git)を利用できます。
 
 ## Getting Started
 プロジェクトでnpmを使っている場合、npm経由でfincode for ESModulesをインストールできます。
