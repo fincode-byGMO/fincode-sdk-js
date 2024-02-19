@@ -1,6 +1,6 @@
 {
-  "name": "@epsilon-web/fincode-js-test",
-  "version": "0.0.9",
+  "name": "@fincode/js",
+  "version": "1.0.0",
   "keyword": [
     "fincode",
     "fincodebygmo",
@@ -15,6 +15,10 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/fincode-byGMO/fincode-sdk-js.git"
+  },
+  "homepage": "https://www.fincode.jp/",
+  "bugs": {
+    "url": "https://github.com/fincode-byGMO/fincode-sdk-js/issues"
   },
   "packageManager": "pnpm@8.15.1",
   "devDependencies": {
