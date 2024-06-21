@@ -516,6 +516,64 @@ export type PaymentObject = {
      * Format: `yyyy/MM/dd HH:mm:ss.SSS`
      */
     payment_date?: string | null
+
+    // ---
+    // Apple Pay Payment
+    // ---
+
+    // ---
+    // Direct Debit Payment
+    // ---
+
+    /**
+     * Target date (The date direct debit billing will be executed.)
+     */
+    target_date?: string | null
+
+    /**
+     * Withdrawal date (The date direct debit billing was executed.)
+     */
+    withdrawal_date?: string | null
+
+    /**
+     * End date of accepting payment request.
+     */
+    request_accept_end_date?: string | null
+
+    /**
+     * The date result of transfer will be notified.
+     */
+    transfer_return_date?: string | null
+
+    /**
+     * Bank code of the bank account used in this direct debit payment.
+     */
+    bank_code?: string | null
+
+    /**
+     * Bank name of the bank account used in this direct debit payment.
+     */
+    bank_name?: string | null
+
+    /**
+     * Branch code of the bank account used in this direct debit payment.
+     */
+    branch_code?: string | null
+
+    /**
+     * Branch name of the bank account used in this direct debit payment.
+     */
+    branch_name?: string | null
+
+    /**
+     * Usage details that will be displayed on the customer's bank statement.
+     */
+    remarks?: string | null
+
+    /**
+     * Result code of direct debit payment (returned by the direct debit payment provider.)
+     */
+    result_code?: DirectDebitResultCode | null
 }
 
 /**
@@ -1020,6 +1078,21 @@ export type ExecutingPaymentRequest = {
      * User Agent information of the browser of your URL that customer will be redirected after finishing payment on PayPay app/website.
      */
     user_agent?: string | null
+    
+    //---
+    // Apple Pay Payment
+    //---
+
+    //---
+    // Direct Debit Payment
+    //---
+
+    /**
+     * Target date (The date direct debit billing will be executed.)
+     * 
+     * Format: `yyyy/MM/dd`
+     */
+    target_date?: string | null
 }
 
 
@@ -1034,3 +1107,25 @@ export type ExecutingPaymentRequest = {
  * - `AUTHENTICATED`: 3D Secure Authentication has already finished. So this payment is awaiting for Payment-After-3DSecure (PUT /v1/payments/{id}/secure)
  */
 export type PaymentStatus = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED"
+
+
+/**
+ * Result code of direct debit payment. (returned by the direct debit payment provider.)
+ * 
+ * - `0`: Success.
+ * - `1`: Failed due to insufficient balance.
+ * - `2`: Failed because the bank account does not exist.
+ * - `3`: Failed due to buyer's action.
+ * - `4`: Failed due to missing or incomplete request form. This occurs when the direct debit request form is not registered with the financial institution.
+ * - `8`: Failed because there are something wrong with the requester shop.
+ * - `9|E|N`: Failed because of some abnormal error. (Please contact fincode support.)
+ */
+export type DirectDebitResultCode =
+    | "0"
+    | "1"
+    | "2"
+    | "3"
+    | "4"
+    | "9"
+    | "E"
+    | "N"
