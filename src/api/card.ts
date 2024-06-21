@@ -162,26 +162,3 @@ export type UpdatingCardRequest = {
      */
     expire?: string | null
 }
-
-/**
- * Response object of Deleting Card (used for DELETE /v1/customers/{customer_id}/cards/{id})
- */
-export type DeletingCardResponse = {
-    /**
-     * Customer's customer ID deleted card was tied to.
-     */
-    customer_id: string
-
-    /**
-     * Card ID that has just been deleted.
-     */
-    id: string
-
-    /**
-     * Flag this card has already been deleted or not.
-     * 
-     * - `0`: Not deleted. This customer is still available.
-     * - `1`: Deleted. This customer is no longer available.
-     */
-    delete_flag: "0" | "1"
-}
