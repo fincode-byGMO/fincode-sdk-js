@@ -574,6 +574,86 @@ export type PaymentObject = {
      * Result code of direct debit payment (returned by the direct debit payment provider.)
      */
     result_code?: DirectDebitResultCode | null
+
+    // ---
+    // Virtual Account Payment
+    // ---
+
+    /**
+     * Billing amount of Virtual Account payment.
+     */
+    billing_amount?: number | null
+
+    /**
+     * Billing tax of Virtual Account payment.
+     */
+    billing_tax?: number | null
+
+    /**
+     * Billing total amount of Virtual Account payment.
+     */
+    billing_total_amount?: number | null
+
+    /**
+     * Branch code of the virtual account used in this payment.
+     */
+    va_branch_code?: string | null
+
+    /**
+     * Branch name of the virtual account used in this payment.
+     */
+    va_branch_name?: string | null
+
+    /**
+     * Account number of the virtual account used in this payment.
+     */
+    va_account_number?: string | null
+
+    /**
+     * Account holder name of the virtual account used in this payment.
+     */
+    va_account_name?: string | null
+
+    /**
+     * The date this virtual account was assigned.
+     * 
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    account_assignment_date?: string | null
+
+    /**
+     * Virtual account identifier.
+     */
+    virtual_account_id?: string | null
+
+    /**
+     * The date this virtual account was paid.
+     * 
+     * Format: `yyyy/MM/dd`
+     */
+    transaction_date?: string | null
+
+    /**
+     * The business day of the virtual account payment was processed by the bank.
+     * 
+     * Format: `yyyy/MM/dd`
+     */
+    value_date?: string | null
+
+    /**
+     * Remitter account holder name of the virtual account payment.
+     */
+    remitter_account_name?: string | null
+
+    /**
+     * Remitter bank name of the virtual account payment.
+     */
+    remitter_bank_name?: string | null
+
+    /**
+     * Remitter branch name of the virtual account payment.
+     */
+    remitter_branch_name?: string | null
 }
 
 /**
@@ -1093,6 +1173,21 @@ export type ExecutingPaymentRequest = {
      * Format: `yyyy/MM/dd`
      */
     target_date?: string | null
+
+    //---
+    // Virtual Account Payment
+    //---
+
+    /**
+     * If you want to use same Virtual Account for multiple payments, you can set the reference ID of Virtual Account payment.
+     */
+    reference_order_id?: string | null
+
+    /**
+     * Account Name of Virtual Account.
+     * (Use the statement notation registered in the fincode shop info.)
+     */
+    account_shop_name?: string | null
 }
 
 
