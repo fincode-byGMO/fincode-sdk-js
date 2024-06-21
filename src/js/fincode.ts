@@ -32,19 +32,7 @@ export type FincodeInstance = {
     ) => void
 
     payments: (
-        transaction: {
-            pay_type: "Card",
-            access_id: string,
-            id: string,
-            card_no?: string,
-            expire?: string,
-            customer_id?: string,
-            card_id?: string,
-            method: "1" | "2",
-            pay_times?: string,
-            security_code?: string,
-            holder_name?: string,
-        },
+        transaction: Payment.ExecutingPaymentRequest,
         callback: (status: number, response: Payment.PaymentObject) => void,
         errorCallback: () => void,
     ) => void
