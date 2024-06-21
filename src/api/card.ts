@@ -78,10 +78,10 @@ export type CardObject = {
      * - `MASTER`: Mastercard card.
      * - `JCB`: JCB card.
      * - `AMEX`: American Express card.
-     * - `Diners`: DinersClub card.
-     * - `(empty string)`: Unknown card brand.
+     * - `DISCOVER`: Discover card.
+     * - `(empty string)`: Unknown card brand (or test card)
      */
-    brand: CardBrand | ""
+    brand: CardBrand
 }
 
 /**
@@ -91,9 +91,11 @@ export type CardObject = {
  * - `MASTER`: Mastercard card.
  * - `JCB`: JCB card.
  * - `AMEX`: American Express card.
- * - `Diners`: DinersClub card.
+ * - `DINERS`: DinersClub card.
+ * - `DISCOVER`: Discover card.
+ * - `(empty string)`: Unknown card brand (or test card)
  */
-export type CardBrand = "VISA" | "MASTER" | "JCB" | "AMEX" | "DINERS"
+export type CardBrand = "VISA" | "MASTER" | "JCB" | "AMEX" | "DINERS" | "DISCOVER" | ""
 
 /**
  * Card types
