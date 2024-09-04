@@ -7,7 +7,7 @@ import * as Card from "./card"
  * - `Konbini`: this payment accepts konbini.
  * - `PayPay`: this payment accepts PayPay.
  * - `Applepay`: this payment accepts Apple Pay.
- * - `Directdebit`: this payment accepts Direct Debit.
+ * - `Directdebit`: this payment accepts Direct Debit (Japanese: Kouza Furikae).
  * - `Virtualaccount`: this payment accepts Virtual Account.
  */
 export type PayType = "Card" | "Konbini" | "PayPay" | "Applepay" | "Directdebit" | "Virtualaccount"
@@ -39,12 +39,12 @@ export type PaymentObject = {
     /**
      * Accepted payment method in this payment. 
      * 
-     * - `Card`: this payment accepts card.
-     * - `Konbini`: this payment accepts konbini.
-     * - `Paypay`: this payment accepts PayPay.
-     * - `Applepay`: this payment accepts Apple Pay.
-     * - `Directdebit`: this payment accepts Direct Debit.
-     * - `Virtualaccount`: this payment accepts Virtual Account.
+     * - `Card`: this payment is card payment.
+     * - `Konbini`: this payment is konbini payment.
+     * - `Paypay`: this payment is PayPay payment.
+     * - `Applepay`: this payment is Apple Pay payment.
+     * - `Directdebit`: this payment is Direct Debit payment（Japanese: Kouza Furikae）.
+     * - `Virtualaccount`: this payment is Virtual Account payment.
      */
     pay_type: PayType
 
@@ -142,6 +142,12 @@ export type PaymentObject = {
      * if customer paid after expiration, this flag will be set to `1`.
      */
     expire_overpayment_flag?: "0" | "1" | null
+
+    /**
+     * - [PayPay]: Customer will be redirected after finishing payment on PayPay app/website.
+     * - [Card]: Payment with 3-D Secure 2 authentication will be started by accessing this URL by customer.
+     */
+    redirect_url?: string | null
 
     /**
      * Date this payment was created.
@@ -282,6 +288,18 @@ export type PaymentObject = {
      * - `param`: this value will be used in 3D Secure 2 authentication after redirecting this url and return as "application/x-www-form-urlencoded".
      */
     tds2_ret_url?: string | null
+
+    /**
+     * Returning URL of your website when 3D Secure 2 authentication is completed and the payment is successful. (自動リダイレクト型3Dセキュア認証; Automatic Redirect Type 3D Secure Authentication)
+     * The redirect to this URL will be executed with POST method.
+     */
+    return_url?: string | null
+
+    /**
+     * Returning URL of your website when 3D Secure 2 authentication or payment is failed. (自動リダイレクト型3Dセキュア認証; Automatic Redirect Type 3D Secure Authentication)
+     * The redirect to this URL will be executed with POST method.
+     */
+    return_url_on_failure?: string | null
 
     /**
      * The processing status of 3D Secure 2 authentication.
@@ -446,11 +464,6 @@ export type PaymentObject = {
      * Canceling order description that customer can read on PayPay app.
      */
     cancel_description?: string | null
-
-    /**
-     * Redirect URL that customer will be redirected after finishing payment on PayPay app/website.
-     */
-    redirect_url?: string | null
 
     /**
      * Redirect Type of PayPay payment.
@@ -729,32 +742,12 @@ export type ExecutingPaymentRequest = {
      */
     access_id: string
 
-    // ---
-    // Card Payment
-    // ---
-
-    /**
-     * One-time token that used to identify card that will be used in this payment.
-     * 
-     * You must fill this field or both "card_id" and "customer_id" fields.
-     */
-    token?: string | null
-
-    /**
-     * The expiring date of the card used in this payment.
-     * 
-     * Format: `yymm`, e.g. `3011` means 2030/11
-     */
-    expire?: string | null
-
     /**
      * Customer's customer ID that will be charged because payment.
      * 
      * You must fill both this and "card_id" fields or "token" field.
      */
     customer_id?: string | null
-
-    
 
     /**
      * The term payment is available.
@@ -766,16 +759,24 @@ export type ExecutingPaymentRequest = {
      */
     payment_term_day?: string | null
 
+    // ---
+    // Card Payment
+    // ---
+
+    /**
+     * One-time token that used to identify card that will be used in this payment.
+     * 
+     * You must fill this field or both "card_id" and "customer_id" fields.
+     */
+    token?: string | null
+
+
     /**
      * Customer's payment method ID that will be used in this payment. 
      * 
      * (You can use this field when `pay_type` is `Card` or `Directdebit`)
      */
     payment_method_id?: string | null
-
-    // ---
-    // card payment
-    // ---
 
     /**
      * Customer's card ID that will be used in this payment.
@@ -799,14 +800,6 @@ export type ExecutingPaymentRequest = {
      */
     pay_times?: string | null
 
-    /**
-     * Holder name of the card used in this payment.
-     * 
-     * If any card have not been used in this payment yet, this field will be null.
-     */
-    holder_name?: string | null
-
-
     // ---------------------------
     // 3D Secure 2 Params
     // ---------------------------
@@ -822,6 +815,22 @@ export type ExecutingPaymentRequest = {
      * - param?: this value will be used in 3D Secure 2 authentication after redirecting this url and return as "application/x-www-form-urlencoded".
      */
     tds2_ret_url?: string | null
+
+    /**
+     * Returning URL of your website when 3D Secure 2 authentication is completed and the payment is successful. (自動リダイレクト型3Dセキュア認証; Automatic Redirect Type 3D Secure Authentication)
+     * The redirect to this URL will be executed with POST method.
+     * 
+     * If the `tds2_ret_url` is set, this field will be ignored.
+     */
+    return_url?: string | null
+
+    /**
+     * Returning URL of your website when 3D Secure 2 authentication or payment is failed. (自動リダイレクト型3Dセキュア認証; Automatic Redirect Type 3D Secure Authentication)
+     * The redirect to this URL will be executed with POST method.
+     * 
+     * If the `tds2_ret_url` is set, this field will be ignored.
+     */
+    return_url_on_failure?: string | null
 
     /**
      * Date the account who requests 3D Secure 2 was last updated.
@@ -1158,7 +1167,7 @@ export type ExecutingPaymentRequest = {
      * User Agent information of the browser of your URL that customer will be redirected after finishing payment on PayPay app/website.
      */
     user_agent?: string | null
-    
+
     //---
     // Apple Pay Payment
     //---
