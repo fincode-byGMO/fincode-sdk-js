@@ -38,5 +38,12 @@
   "scripts": {
     "build": "tsc",
     "lint": "eslint . --ext .ts,.js"
-  }
+  },
+  "keywords": [
+	"fincode",
+	"fincodebygmo",
+	"gmo",
+	"gmoepsilon",
+	"fincode-sdk-js",
+  ]
 }
