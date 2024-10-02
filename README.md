@@ -73,7 +73,7 @@ import { executePayment } from "@fincode/js"
         ui: ui, // fincode UI instance (FincodeUI). : you can use the data input in the fincode ui component directly.
 
         id: "<Order ID>", // order id of payment (string)
-        payType: "Card", // payment type (only "Card" is supported.)
+        payType: "Card", // payment type (Card | Applepay | Konbini | Paypay | Directdebit | Virtualaccount)
         accessId: "<Access ID>", // access id of payment (string)
     })
 })()
