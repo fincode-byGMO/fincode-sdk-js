@@ -40,10 +40,10 @@
     "lint": "eslint . --ext .ts,.js"
   },
   "keywords": [
-	"fincode",
-	"fincodebygmo",
-	"gmo",
-	"gmoepsilon",
-	"fincode-sdk-js"
+    "fincode",
+    "fincodebygmo",
+    "gmo",
+    "gmoepsilon",
+    "fincode-sdk-js"
   ]
 }
