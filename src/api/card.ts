@@ -136,59 +136,96 @@ export type CardType = "0" | "1" | "2" | "3"
 export type CardUpdaterMode = "enabled" | "disabled" | "inherit"
 
 /**
- * Request object of Registering Card (used for POST /v1/customers/{customer_id}/cards)
+ * Card details passed to `Fincode.cards(...)` to register a new card.
+ *
+ * Leaving `card_id` out is what makes `cards()` register instead of update.
+ * fincode.js takes `customer_id` out of this object to build the request URL
+ * and sends the rest as the body of
+ * `POST /v1/customers/{customer_id}/cards`.
  */
 export type RegisteringCardRequest = {
     /**
+     * Customer ID of the customer who will own this card.
+     */
+    customer_id: string
+
+    /**
      * Flag that means the customer uses this card by default or not.
-     * 
+     *
      * - `0`: OFF
      * - `1`: ON
+     *
+     * Registering a card without this field is rejected with
+     * `E0006019001`.
      */
     default_flag: "0" | "1"
 
     /**
-     * Card token responded from fincodeJS (Fincode.tokens(...))
+     * Card number.
      */
-    token: string
+    card_no: string
 
     /**
-     * Card holder's name
+     * The date this card expires.
+     *
+     * Format: `yyMM`, e.g. `3011` means 2030/11
      */
-    holder_name?: string | null
+    expire: string
 
     /**
      * Security code (CVC/CVV)
      */
-    security_code?: string | null
+    security_code?: string
+
+    /**
+     * Card holder's name.
+     */
+    holder_name?: string
 }
 
 /**
- * Request object of Updating Card (used for PUT /v1/customers/{customer_id}/cards/{id})
+ * Card details passed to `Fincode.cards(...)` to update a card that is
+ * already registered.
+ *
+ * Passing `card_id` is what makes `cards()` update instead of register.
+ * fincode.js takes `customer_id` and `card_id` out of this object to build
+ * the request URL and sends the rest as the body of
+ * `PUT /v1/customers/{customer_id}/cards/{card_id}`.
  */
 export type UpdatingCardRequest = {
     /**
+     * Customer ID of the customer who owns this card.
+     */
+    customer_id: string
+
+    /**
+     * ID of the card to update.
+     */
+    card_id: string
+
+    /**
      * Flag that means the customer uses this card by default or not.
-     * 
-     * - `0`: OFF
-     * - `1`: ON
+     *
+     * Only turning the flag on is accepted here. Sending `"0"` is rejected
+     * with `E0008019008`. To move the default to another card, turn the flag
+     * on for that card instead.
      */
-    default_flag?: "0" | "1" | null
+    default_flag?: "1"
 
     /**
-     * Card token responded from fincodeJS (Fincode.tokens(...))
+     * The date this card expires.
+     *
+     * Format: `yyMM`, e.g. `3011` means 2030/11
      */
-    token?: string | null
+    expire?: string
 
     /**
-     * Card holder's name
+     * Security code (CVC/CVV)
      */
-    holder_name?: string | null
+    security_code?: string
 
     /**
-     * The expiring date of the card used in this payment.
-     * 
-     * Format: YYMM
+     * Card holder's name.
      */
-    expire?: string | null
+    holder_name?: string
 }

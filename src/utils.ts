@@ -1,5 +1,5 @@
 import { FincodeSDKError } from "./_utils";
-import { APIErrorResponse, CardObject, PaymentObject, TokenIssuingResponse } from "./api";
+import { APIErrorResponse, CardObject, PaymentObject, RegisteringCardRequest, TokenIssuingResponse } from "./api";
 import { FincodeInstance, FincodeUI } from "./js";
 
 /**
@@ -155,7 +155,7 @@ export const registerCard = (args: {
             return;
         }
 
-        const card: Parameters<FincodeInstance["cards"]>[0] = {
+        const card: RegisteringCardRequest = {
             customer_id: customerId,
             card_no: formData.cardNo,
             expire: formData.expire,

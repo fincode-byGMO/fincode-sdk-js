@@ -48,16 +48,13 @@ export type FincodeInstance = {
         errorCallback: () => void,
     ) => void
 
+    /**
+     * Registers a new card, or updates one that is already registered.
+     *
+     * Passing `card_id` updates that card. Leaving it out registers a new one.
+     */
     cards: (
-        card: {
-            card_id?: string
-            customer_id: string,
-            default_flag?: "0" | "1",
-            card_no?: string,
-            expire?: string,
-            security_code?: string,
-            holder_name?: string,
-        },
+        card: Card.RegisteringCardRequest | Card.UpdatingCardRequest,
         callback: (status: number, response: Card.CardObject) => void,
         errorCallback: () => void,
     ) => void
