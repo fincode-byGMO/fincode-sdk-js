@@ -164,6 +164,11 @@ export type PaymentObject = {
      */
     updated?: string | null
 
+    /**
+     * Bill ID
+     */
+    bill_id?: string | null
+
     // ---
     // Card Payment
     // ---
@@ -590,9 +595,28 @@ export type PaymentObject = {
      */
     result_code?: DirectDebitResultCode | null
 
+    /**
+     * Transfer service the bank account used in this payment is registered with.
+     */
+    settlement_route?: DirectDebitSettlementRoute | null
+
     // ---
     // Virtual Account Payment
     // ---
+
+    /**
+     * Whether an exact deposit amount is set on the virtual account used in
+     * this payment.
+     *
+     * When set, the customer cannot transfer an amount other than the billed
+     * one.
+     */
+    use_exact_deposit_amount?: boolean | null
+
+    /**
+     * Whether this payment uses a virtual account fixed to the customer.
+     */
+    use_static_virtual_account?: boolean | null
 
     /**
      * Billing amount of Virtual Account payment.
@@ -1247,6 +1271,16 @@ export type PaymentStatus = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED
  * - `E`: Failed due to a data error. (Direct Debit on the 5th, 6th, 23rd and 27th only)
  * - `N`: The transfer result has not arrived yet. (Direct Debit on the 5th, 6th, 23rd and 27th only)
  */
+/**
+ * Transfer service the bank account is registered with.
+ *
+ * The service determines the days of the month on which the debit is taken.
+ *
+ * - `1`: Direct debit on the 5th, 6th, 23rd and 27th.
+ * - `2`: Direct debit on the 1st, 5th, 20th and 26th.
+ */
+export type DirectDebitSettlementRoute = "1" | "2"
+
 export type DirectDebitResultCode =
     | "0"
     | "1"

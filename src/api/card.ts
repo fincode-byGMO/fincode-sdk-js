@@ -72,6 +72,25 @@ export type CardObject = {
     type: CardType
 
     /**
+     * Whether the card updater keeps this card's details up to date.
+     */
+    card_updater_mode?: CardUpdaterMode | null
+
+    /**
+     * Date the card details were last updated successfully.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    card_updater_last_success_date?: string | null
+
+    /**
+     * Date an update of the card details was last attempted.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    card_updater_last_attempt_date?: string | null
+
+    /**
      * Card brands user can use in fincode.
      * 
      * - `VISA`: Visa card.
@@ -106,6 +125,15 @@ export type CardBrand = "VISA" | "MASTER" | "JCB" | "AMEX" | "DINERS" | "DISCOVE
  * - `3`: Credit card.
  */
 export type CardType = "0" | "1" | "2" | "3"
+
+/**
+ * Whether the card updater keeps this card's details up to date.
+ *
+ * - `enabled`: update this card.
+ * - `disabled`: do not update this card.
+ * - `inherit`: follow the shop setting.
+ */
+export type CardUpdaterMode = "enabled" | "disabled" | "inherit"
 
 /**
  * Request object of Registering Card (used for POST /v1/customers/{customer_id}/cards)
