@@ -15,7 +15,10 @@ export type FincodeLoaderFn = (initArgs: {
 const findFincodeScript = (): HTMLScriptElement | null => {
     if (typeof document === "undefined") return null
 
-    const scripts = document.querySelectorAll<HTMLScriptElement>(`script[src^="${V1_URL_REGEXP}"`)
+    // 絞り込みは下の V1_URL_REGEXP で行う。
+    // ここに正規表現を埋め込むと属性セレクタとして成立せず、
+    // 例外にもならないまま常に0件になる。
+    const scripts = document.querySelectorAll<HTMLScriptElement>("script[src]")
 
     for (let i = 0; i < scripts.length; i++) {
         const script = scripts[i]
