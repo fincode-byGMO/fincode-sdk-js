@@ -39,6 +39,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "typecheck": "tsc -p tsconfig.test.json",
     "lint": "eslint . --ext .ts,.js",
     "test": "jest"
   },

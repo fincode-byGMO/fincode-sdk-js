@@ -25,7 +25,7 @@ export interface FincodeUI {
      * get form data from UI component.
      * 
      */
-    getFormData: () => Promise<FormData>
+    getFormData: () => Promise<FincodeUIFormData>
 
 }
 export type Appearance = {
@@ -170,57 +170,102 @@ export type Appearance = {
     fontFamily?: string
 }
 
-export type FormData = {
+/**
+ * Values read out of the mounted card input form.
+ *
+ * Which fields are present depends on what the customer chose in the form.
+ *
+ * - Selecting a saved card returns `customerId` and `cardId`.
+ * - Entering a new card returns `cardNo`, `CVC`, `expire`, `year`, `month`
+ *   and `holderName`.
+ *
+ * `method` is always present. `payTimes` is present for lump-sum and
+ * installment payments, but not for revolving ones.
+ */
+export type FincodeUIFormData = {
 
     /**
-     * Card ID
-     */
-    cardId?: string
-
-    /**
-     * Customer ID
+     * Customer ID.
+     *
+     * Present only when the customer selected a saved card.
      */
     customerId?: string
 
     /**
-     * Number of installment payments
+     * Card ID.
+     *
+     * Present only when the customer selected a saved card.
      */
-    payTimes: string
+    cardId?: string
 
     /**
-     * Payment method
-     */
-    method: "1" | "2"
-
-    /**
-     * Card number
+     * Card number, with any non-digit characters removed.
+     *
+     * Present only when the customer entered a new card.
      */
     cardNo?: string
 
     /**
-     * CVC
+     * CVC.
+     *
+     * Present only when the customer entered a new card.
      */
     CVC?: string
 
     /**
-     * Year and month the card expires
-     * 
-     * format: `yyMM`
+     * Year and month the card expires.
+     *
+     * Format: `yyMM`
+     *
+     * Present only when the customer entered a new card.
      */
     expire?: string
 
     /**
-     * Year the card expires
+     * Year the card expires.
+     *
+     * Format: `yy`
+     *
+     * Present only when the customer entered a new card.
      */
-    expireYear?: string
+    year?: string
 
     /**
-     * Month the card expires
+     * Month the card expires.
+     *
+     * Format: `MM`
+     *
+     * Present only when the customer entered a new card.
      */
-    expireMonth?: string
+    month?: string
 
     /**
-     * Card holder name
+     * Card holder name.
+     *
+     * Present only when the customer entered a new card.
      */
     holderName?: string
+
+    /**
+     * Number of installment payments.
+     *
+     * `"1"` for a lump-sum payment, the number the customer chose for an
+     * installment payment. Not present for a revolving payment.
+     */
+    payTimes?: string
+
+    /**
+     * Payment method.
+     *
+     * - `1`: lump-sum
+     * - `2`: installments
+     * - `5`: revolving
+     */
+    method: "1" | "2" | "5"
 }
+
+/**
+ * @deprecated Renamed to `FincodeUIFormData` because `FormData` shadows the
+ * built-in DOM type of the same name.
+ */
+export type FormData = FincodeUIFormData
