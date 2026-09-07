@@ -1,0 +1,9 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        // テストで default import を扱えるようにする。
+        // 配布物のビルドには影響させたくないため、ここだけで有効にする。
+        "esModuleInterop": true
+    },
+    "include": ["src"]
+}
