@@ -214,8 +214,9 @@ export type PaymentObject = {
      * 
      * - `1`: The customer will be charged for this payment in a lump-sum.
      * - `2`: The customer will be charged for this payment in several installments.
+     * - `5`: The customer will be charged for this payment on a revolving basis.
      */
-    method?: "1" | "2" | null
+    method?: "1" | "2" | "5" | null
 
     /**
      * The number of installments that will charge to the customer in this payment registered as installment payment.
@@ -711,13 +712,16 @@ export type KonbiniPaymentProviderProcessResult =
  * 
  * - `00010`: Seven-Eleven
  * - `00020`: Lawson
- * - `00050`: Daily Yamazaki and other stores
+ * - `00030`: FamilyMart
+ * - `00050`: Daily Yamazaki and other stores. These stores no longer accept
+ *   new payments. Payments made while they did still return this code.
  * - `00080`: Mini Stop
- * - `00760`: Seicomart 
+ * - `00760`: Seicomart
  */
 export type KonbiniCode =
     "00010" |
     "00020" |
+    "00030" |
     "00050" |
     "00080" |
     "00760"
@@ -791,10 +795,11 @@ export type ExecutingPaymentRequest = {
      * 
      * - `1`: The customer will be charged for this payment in a lump-sum.
      * - `2`: The customer will be charged for this payment in several installments.
-     * 
+     * - `5`: The customer will be charged for this payment on a revolving basis.
+     *
      * You must fill this field when this payment's job_type is `AUTH` or `CAPTURE`
      */
-    method?: "1" | "2" | null
+    method?: "1" | "2" | "5" | null
 
     /**
      * The number of installments that will charge to the customer in this payment registered as installment payment.
@@ -919,7 +924,7 @@ export type ExecutingPaymentRequest = {
      * - `05`: With 3rd Party authoriztion.
      * - `06`: With FIDO authorization.
      */
-    tds2_three_ds_req_auth_method?: "01" | "02" | "03" | "04" | "05" | null
+    tds2_three_ds_req_auth_method?: "01" | "02" | "03" | "04" | "05" | "06" | null
 
     /**
      * Date the customer logged in.
@@ -1205,13 +1210,27 @@ export type ExecutingPaymentRequest = {
  * Status of a payment.
  * 
  * - `UNPROCESSED`: This payment has been registered but no action has been taken yet.
- * - `CHECK`: This payment is only used for checking if the card is valid or not.
+ * - `CHECKED`: The card validity check has completed.
  * - `AUTHORIZED`: Card authorization was already accepted. So this payment is waiting for capturing.
  * - `CAPTURED`: The sale from this payment has already been captured.
  * - `CANCELED`: This payment is canceled by request.
  * - `AUTHENTICATED`: 3D Secure Authentication has already finished. So this payment is awaiting for Payment-After-3DSecure (PUT /v1/payments/{id}/secure)
+ * - `AWAITING_CUSTOMER_PAYMENT`: This payment is awaiting for customer's payment.
+ * - `AWAITING_PAYMENT_APPROVAL`: This payment is awaiting the transfer to be processed by fincode and the financial institution.
+ * - `EXPIRED`: This payment is expired.
+ * - `FAILED`: This payment failed. Register the payment again to retry.
+ *
+ * Which values a payment can take depends on its `pay_type`:
+ *
+ * - `Card`: UNPROCESSED, CHECKED, AUTHORIZED, CAPTURED, CANCELED, AUTHENTICATED
+ * - `Konbini`: UNPROCESSED, AWAITING_CUSTOMER_PAYMENT, CAPTURED, CANCELED, EXPIRED
+ * - `Paypay`: UNPROCESSED, AUTHORIZED, AWAITING_CUSTOMER_PAYMENT, CAPTURED, CANCELED, EXPIRED
+ * - `Applepay`: UNPROCESSED, AUTHORIZED, CAPTURED, CANCELED
+ * - `Googlepay`: UNPROCESSED, AUTHORIZED, CAPTURED, CANCELED, AUTHENTICATED
+ * - `Directdebit`: UNPROCESSED, AWAITING_PAYMENT_APPROVAL, CAPTURED, CANCELED, FAILED
+ * - `Virtualaccount`: UNPROCESSED, AWAITING_CUSTOMER_PAYMENT, CAPTURED, CANCELED, EXPIRED
  */
-export type PaymentStatus = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED"
+export type PaymentStatus = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED" | "CANCELED" | "AUTHENTICATED" | "AWAITING_CUSTOMER_PAYMENT" | "AWAITING_PAYMENT_APPROVAL" | "EXPIRED" | "FAILED"
 
 
 /**
@@ -1222,8 +1241,11 @@ export type PaymentStatus = "UNPROCESSED" | "CHECKED" | "AUTHORIZED" | "CAPTURED
  * - `2`: Failed because the bank account does not exist.
  * - `3`: Failed due to buyer's action.
  * - `4`: Failed due to missing or incomplete request form. This occurs when the direct debit request form is not registered with the financial institution.
+ * - `7`: Failed due to a data error. (Direct Debit on the 1st, 5th, 20th and 26th only)
  * - `8`: Failed because there are something wrong with the requester shop.
- * - `9|E|N`: Failed because of some abnormal error. (Please contact fincode support.)
+ * - `9`: Failed because of some other error. (Please contact fincode support.)
+ * - `E`: Failed due to a data error. (Direct Debit on the 5th, 6th, 23rd and 27th only)
+ * - `N`: The transfer result has not arrived yet. (Direct Debit on the 5th, 6th, 23rd and 27th only)
  */
 export type DirectDebitResultCode =
     | "0"
@@ -1231,6 +1253,8 @@ export type DirectDebitResultCode =
     | "2"
     | "3"
     | "4"
+    | "7"
+    | "8"
     | "9"
     | "E"
     | "N"
