@@ -4,5 +4,5 @@ export type APIErrorResponse = {
 
 export type APIError = {
     error_code: string
-    error_messaage: string
+    error_message: string
 }

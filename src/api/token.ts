@@ -19,7 +19,7 @@ export type TokenIssuingResponse = {
      * 
      * Format: yyyy/MM/dd HH:mm:ss.SSS
      */
-    expore: string;
+    expire: string;
 
     /**
      * Flag that security code was set or not.

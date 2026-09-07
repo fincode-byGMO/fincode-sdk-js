@@ -5,12 +5,13 @@ import * as Card from "./card"
  * 
  * - `Card`: this payment accepts card.
  * - `Konbini`: this payment accepts konbini.
- * - `PayPay`: this payment accepts PayPay.
+ * - `Paypay`: this payment accepts PayPay.
  * - `Applepay`: this payment accepts Apple Pay.
+ * - `Googlepay`: this payment accepts Google Pay.
  * - `Directdebit`: this payment accepts Direct Debit (Japanese: Kouza Furikae).
  * - `Virtualaccount`: this payment accepts Virtual Account.
  */
-export type PayType = "Card" | "Konbini" | "PayPay" | "Applepay" | "Directdebit" | "Virtualaccount"
+export type PayType = "Card" | "Konbini" | "Paypay" | "Applepay" | "Googlepay" | "Directdebit" | "Virtualaccount"
 
 /**
  * Payment Job Code
@@ -443,7 +444,7 @@ export type PaymentObject = {
      * 
      * Format: `yyyy/MM/dd HH:mm:ss.SSS`
      */
-    cpde_expiry_date?: string | null
+    code_expiry_date?: string | null
 
     /**
      * Order description that customer can read on PayPay app.
@@ -496,7 +497,7 @@ export type PaymentObject = {
     /**
      * Payment result code of PayPay payment.
      */
-    payment_result_code?: string | null
+    paypay_result_code?: string | null
 
     /**
      * Transaction ID created by PayPay.

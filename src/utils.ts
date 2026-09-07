@@ -58,7 +58,7 @@ export const executePayment = (args: {
                 errors: [
                     {
                         error_code: "-",
-                        error_messaage: "Some error has occured. couldn't execute payment",
+                        error_message: "Some error has occured. couldn't execute payment",
                     },
                 ]
             }
