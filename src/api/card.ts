@@ -229,3 +229,16 @@ export type UpdatingCardRequest = {
      */
     holder_name?: string
 }
+
+/**
+ * Response of listing a customer's cards (used in `Fincode.getCardsList()`).
+ *
+ * `GET /v1/customers/{customer_id}/cards` returns the cards under a single
+ * `list` key and no pagination fields.
+ */
+export type RetrievingCardListResponse = {
+    /**
+     * Cards the customer has registered.
+     */
+    list: CardObject[]
+}

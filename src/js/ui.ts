@@ -1,48 +1,109 @@
 export interface FincodeUI {
 
     /**
-     * 
      * create fincode UI component for iframe embedding.
+     *
+     * `method` decides what the mounted form is used for. It also wins over
+     * `appearance.method`, so set it here.
+     *
+     * `callBack` and `errorCallBack` are accepted but never called by
+     * fincode.js.
      */
     create: (
         method: "payments" | "cards" | "token",
-        appearance: Appearance
+        appearance: Appearance,
+        callBack?: () => void,
+        errorCallBack?: () => void,
     ) => void
 
     /**
-     * 
      * mount fincode ui.
-     * 
+     *
      * before calling this, call `UI.create(method, appearance)` method.
+     *
+     * The element with `elementId`, and one with `${elementId}-form`, must
+     * both be present in the document.
+     *
+     * `width` defaults to `"500"`. Values below `250` are raised to `"250"`
+     * and values from `768` up are lowered to `"768"`.
+     *
+     * `callBack` and `errorCallBack` are accepted but never called by
+     * fincode.js.
      */
     mount: (
         elementId: string,
-        width: string,
+        width?: string,
+        callBack?: () => void,
+        errorCallBack?: () => void,
     ) => void
 
     /**
-     * 
      * get form data from UI component.
-     * 
+     *
+     * Reads the values out of the mounted iframe. fincode.js waits a fixed
+     * 30ms for the iframe to answer, so calling this immediately after
+     * `mount` can return an empty object.
      */
     getFormData: () => Promise<FincodeUIFormData>
 
+    /**
+     * remove the mounted form.
+     *
+     * Empties the element the form was mounted into. Throws if `mount` has
+     * not been called.
+     *
+     * `callBack` and `errorCallBack` are accepted but never called by
+     * fincode.js.
+     */
+    destroy: (
+        callBack?: () => void,
+        errorCallBack?: () => void,
+    ) => void
+
 }
+/**
+ * Customisation of the mounted card input form.
+ *
+ * Every `color*` value is a 6-digit hex code **without** a leading `#`, for
+ * example `"1f1f1f"`. Setting `theme` overwrites the colours it covers, so
+ * pass colours individually or pass a theme, not both.
+ */
 export type Appearance = {
     /**
      * Declare UI Layout
-     * 
-     * - `horizontal`: The elements that make up the form are aligned vertically, and the mounted form will be vertical.
-     * - `vertical`: The elements that make up the form will spread horizontally, and the mounted form will be horizontal.
-     * 
+     *
+     * - `horizontal`: use the horizontal form.
+     * - `vertical`: use the vertical form.
+     *
      * default `vertical`
      */
     layout?: "horizontal" | "vertical"
 
     /**
+     * Preset colour scheme.
+     *
+     * - `fincode`: the fincode colours.
+     * - `dark`: a dark scheme.
+     *
+     * Applied after the individual colour settings, so it overwrites
+     * `colorBackground`, `colorBackgroundInput`, `colorPlaceHolder`,
+     * `colorBackgroundRadio`, `colorLabelText`, `colorRadioText`,
+     * `colorText`, `colorBorder`, `colorError` and `colorCheck`.
+     */
+    theme?: "fincode" | "dark"
+
+    /**
      * Customer ID
      */
     customerId?: string | null
+
+    /**
+     * ID of the card to select in the form.
+     *
+     * Use together with `customerId` to preselect one of the customer's
+     * saved cards.
+     */
+    cardId?: string | null
 
     /**
      * Hiding label text.
@@ -87,7 +148,7 @@ export type Appearance = {
     /**
      * Change label text of CVC field.
      */
-    labelCVC?: string
+    labelCvc?: string
 
     /**
      * Change label text of card holder name field.
@@ -96,6 +157,8 @@ export type Appearance = {
 
     /**
      * Change label text of payment method field.
+     *
+     * default `お支払方法`
      */
     labelPaymentMethod?: string
 
@@ -116,8 +179,17 @@ export type Appearance = {
 
     /**
      * Change placeholder text of CVC field.
+     *
+     * default `001`
      */
     cvc?: string
+
+    /**
+     * Change placeholder text of card holder name field.
+     *
+     * default `TARO YAMADA`
+     */
+    holderName?: string
 
     /**
      * Change background color of this ui component.
@@ -165,7 +237,29 @@ export type Appearance = {
     colorCheck?: string
 
     /**
+     * Change background color of the radio buttons of this ui component.
+     */
+    colorBackgroundRadio?: string
+
+    /**
+     * Change color of the radio buttons of this ui component.
+     */
+    colorRadio?: string
+
+    /**
+     * Change text color of the radio button labels of this ui component.
+     */
+    colorRadioText?: string
+
+    /**
+     * Change text color of the select boxes of this ui component.
+     */
+    colorSelect?: string
+
+    /**
      * Change font family of this ui component.
+     *
+     * default `Noto Sans JP, sans-serif`
      */
     fontFamily?: string
 }

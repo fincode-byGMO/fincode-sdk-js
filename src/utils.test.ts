@@ -8,6 +8,7 @@ const uiReturning = (formData: Partial<FormDataOf>): FincodeUI => ({
     create: jest.fn(),
     mount: jest.fn(),
     getFormData: jest.fn().mockResolvedValue(formData as FormDataOf),
+    destroy: jest.fn(),
 })
 
 /**
@@ -21,6 +22,7 @@ const fincodeReturning = (status: number, response: unknown): FincodeInstance =>
     tokens: jest.fn((_card, callback) => callback(status, response as TokenIssuingResponse)),
     cards: jest.fn((_card, callback) => callback(status, response as CardObject)),
     payments: jest.fn((_tx, callback) => callback(status, response as PaymentObject)),
+    getCardsList: jest.fn(),
     ui: jest.fn(),
     setTenantShopId: jest.fn(),
     setIdempotentKey: jest.fn(),
@@ -30,6 +32,7 @@ const fincodeFailing = (): FincodeInstance => ({
     tokens: jest.fn((_card, _callback, errorCallback) => errorCallback()),
     cards: jest.fn((_card, _callback, errorCallback) => errorCallback()),
     payments: jest.fn((_tx, _callback, errorCallback) => errorCallback()),
+    getCardsList: jest.fn((_customerId, _callback, errorCallback) => errorCallback()),
     ui: jest.fn(),
     setTenantShopId: jest.fn(),
     setIdempotentKey: jest.fn(),

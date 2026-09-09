@@ -59,6 +59,15 @@ export type FincodeInstance = {
         errorCallback: () => void,
     ) => void
 
+    /**
+     * Lists the cards a customer has registered.
+     */
+    getCardsList: (
+        customerId: string,
+        callback: (status: number, response: Card.RetrievingCardListResponse) => void,
+        errorCallback: () => void,
+    ) => void
+
     payments: (
         transaction: FincodePaymentTransaction,
         callback: (status: number, response: Payment.PaymentObject) => void,
