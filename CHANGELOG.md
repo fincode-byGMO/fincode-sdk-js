@@ -6,10 +6,6 @@
 構成を作り直したメジャーリリースです。移行手順は
 [MIGRATION.md](./MIGRATION.md) を参照してください。
 
-型の判定は、fincode が配信している実物を読んで行いました。ローダーの
-`fincode.js` と、UIコンポーネントの実体である入力フォームのアプリケーション
-です。必須・任意の別や返却項目は、テスト環境の実APIでも確かめています。
-
 **コンパイルエラーにならない変更が1つあります。** `window.Fincode` の型拡張が
 利用側に届くようになるため、同じ拡張を自前で宣言している場合は宣言が衝突します。
 
@@ -27,9 +23,7 @@ Jest、ts-node、素のES Moduleでは落ちていました。
 あわせて省略可能にしました。fincodeJSが読み込まれるまでは `undefined` なので、
 必須で宣言するのは誤りでした。
 
-読み込み済みの `fincode.js` を検出できていませんでした。属性セレクタに正規表現を
-そのまま文字列展開しており、閉じ括弧も欠けていました。実ブラウザとjsdomの
-どちらでも例外にはならず、常に0件を返します。このため `window.Fincode` が
+読み込み済みの `fincode.js` を検出できていませんでした。`window.Fincode` が
 未定義の状態で `initFincode` を呼ぶと、ページに既に `fincode.js` の
 `script` タグがあっても検出できず、2つ目を注入していました。
 
@@ -55,9 +49,9 @@ APIが弾く値が書ける状態でした。
 `Appearance` の `labelCVC` を `labelCvc` にしました。入力フォームが読むのは
 `labelCvc` で、旧名を渡しても効きませんでした。
 
-`create` と `mount` の引数を実物に合わせました。どちらも `callBack` と
-`errorCallBack` を受け取ります。ただし実物は宣言しているだけで呼んでいないため、
-その旨をJSDocに書いて任意引数にしています。`mount` の `width` は省略できます。
+`create` と `mount` の引数をfincodeJSに合わせました。どちらも `callBack` と
+`errorCallBack` を受け取ります。ただしfincodeJSは宣言しているだけで呼んで
+いないため、任意引数にしています。`mount` の `width` は省略できます。
 
 `layout` のJSDocを直しました。`horizontal` の説明が「縦に並ぶ」、`vertical` の
 説明が「横に広がる」と入れ違っていました。
@@ -70,8 +64,8 @@ READMEのサンプルコードを直しました。`ui.create("payment", ...)` �
 ### 追加
 
 `getCardsList` を追加しました。顧客が登録したカードの一覧を取得します。
-`ui.destroy` も追加しました。マウントしたフォームを取り除きます。どちらも実物は
-公開しているのに型がありませんでした。
+`ui.destroy` も追加しました。マウントしたフォームを取り除きます。どちらも
+fincodeJSは公開しているのに型がありませんでした。
 
 `Appearance` に7項目を追加しました。`theme`、`cardId`、`holderName`、
 `colorBackgroundRadio`、`colorRadio`、`colorRadioText`、`colorSelect` です。
@@ -105,22 +99,14 @@ enum に不足していた値を追加しました。`PaymentStatus` の
 `getFormData` の戻り値の型名を `FincodeUIFormData` にしました。`FormData` は
 DOM標準の型と衝突します。旧名は別名として残し `@deprecated` を付けています。
 
-ビルドを tsup に変えました。fincode for Node.JS と同じ構成です。
-
 ### テスト
 
 テストが1件もありませんでした。58件追加しました。
 
-読み込み処理のテストは jsdom で動かします。引数の検証、読み込み済みの場合の
-即時解決、テスト環境と本番環境の出し分け、`load` と `error` の扱い、`head` が
-無い文書での `body` への追加、二重注入をしないことを確かめます。`window` が
-無い環境の挙動は別ファイルで確かめています。
-
-ユーティリティ関数のテストは、fincodeインスタンスとUIコンポーネントを
-スタブにして認証情報なしで動かします。
-
-型の取り決めは `@ts-expect-error` で固定しました。`tsconfig.test.json` が
-テストを型検査していなかったので、そちらも直しています。
+読み込み処理は、引数の検証、読み込み済みの場合の即時解決、テスト環境と本番環境の
+出し分け、`load` と `error` の扱い、`window` や `head` が無い環境での挙動、
+二重注入をしないことを確かめます。ユーティリティ関数はfincodeインスタンスと
+UIコンポーネントをスタブにして確かめます。いずれも認証情報なしで動きます。
 
 ## 1.1.0 以前
 
