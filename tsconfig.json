@@ -5,13 +5,9 @@
         "module": "esnext",
         "strict": true,
         "alwaysStrict": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "declaration": true,
-        "declarationMap": true,
-        "declarationDir": "./dist/types",
+        // 配布物のビルドは tsup が行う。tsc は型検査だけに使う。
+        "noEmit": true,
         "allowJs": false,
-        // "noEmit": true ,   
         "removeComments": false,
         "forceConsistentCasingInFileNames": true,
         "lib": [
@@ -24,6 +20,6 @@
     },
     "include": ["src"],
     "exclude": [
-        "src/**/*.test.ts",
+        "src/**/*.test.ts"
     ]
 }

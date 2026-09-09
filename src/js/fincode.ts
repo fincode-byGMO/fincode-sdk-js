@@ -80,3 +80,15 @@ export type FincodeInstance = {
 
     setIdempotentKey: (idempotencyKey: string) => void
 }
+
+declare global {
+    interface Window {
+        /**
+         * Initializer that fincode.js assigns when it finishes loading.
+         *
+         * Undefined until then, so check it before calling. `initFincode`
+         * handles the loading and the check for you.
+         */
+        Fincode?: FincodeInitializer
+    }
+}
