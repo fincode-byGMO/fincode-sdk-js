@@ -75,15 +75,15 @@ const main = async () => {
 
 fincodeインスタンスが持つメソッドは下記のようにfincodeJSの関数と対応しています。
 
-| fincodeJS                                     | 呼び出し方                                                | 戻り値の型                    |
-| :-------------------------------------------- | :-------------------------------------------------------- | :---------------------------- |
-| `tokens(card, callback, errorCallback)`       | `fincode.tokens(card, callback, errorCallback)`           | `TokenIssuingResponse`        |
-| `cards(card, callback, errorCallback)`        | `fincode.cards(card, callback, errorCallback)`            | `CardObject`                  |
-| `payments(transaction, callback, errorCallback)` | `fincode.payments(transaction, callback, errorCallback)` | `PaymentObject`               |
+| fincodeJS                                           | 呼び出し方                                                  | 戻り値の型                   |
+| :-------------------------------------------------- | :---------------------------------------------------------- | :--------------------------- |
+| `tokens(card, callback, errorCallback)`             | `fincode.tokens(card, callback, errorCallback)`             | `TokenIssuingResponse`       |
+| `cards(card, callback, errorCallback)`              | `fincode.cards(card, callback, errorCallback)`              | `CardObject`                 |
+| `payments(transaction, callback, errorCallback)`    | `fincode.payments(transaction, callback, errorCallback)`    | `PaymentObject`              |
 | `getCardsList(customerId, callback, errorCallback)` | `fincode.getCardsList(customerId, callback, errorCallback)` | `RetrievingCardListResponse` |
-| `ui(appearance)`                              | `fincode.ui(appearance)`                                  | `FincodeUI`                   |
-| `setTenantShopId(tenantShopId)`               | `fincode.setTenantShopId(tenantShopId)`                   | -                             |
-| `setIdempotentKey(idempotentKey)`             | `fincode.setIdempotentKey(idempotentKey)`                 | -                             |
+| `ui(appearance)`                                    | `fincode.ui(appearance)`                                    | `FincodeUI`                  |
+| `setTenantShopId(tenantShopId)`                     | `fincode.setTenantShopId(tenantShopId)`                     | -                            |
+| `setIdempotentKey(idempotentKey)`                   | `fincode.setIdempotentKey(idempotentKey)`                   | -                            |
 
 `cards` はカードIDを渡すかどうかで登録と更新が切り替わります。`card_id` を渡さない場合は登録（`RegisteringCardRequest`）、渡した場合は更新（`UpdatingCardRequest`）になります。
 
@@ -91,12 +91,12 @@ fincodeインスタンスが持つメソッドは下記のようにfincodeJSの�
 
 `fincode.ui(appearance)` が返すオブジェクトは下記の関数を持ちます。
 
-| fincodeJS                    | 呼び出し方                          | 説明                                       |
-| :--------------------------- | :---------------------------------- | :----------------------------------------- |
-| `create(method, appearance)` | `ui.create(method, appearance)`     | カード情報入力フォームを作成します         |
-| `mount(elementId, width)`    | `ui.mount(elementId, width)`        | 指定したIDにフォームをマウントします       |
-| `getFormData()`              | `ui.getFormData()`                  | フォームに入力された値を取得します         |
-| `destroy()`                  | `ui.destroy()`                      | マウントしたフォームを取り除きます         |
+| fincodeJS                    | 呼び出し方                      | 説明                                 |
+| :--------------------------- | :------------------------------ | :----------------------------------- |
+| `create(method, appearance)` | `ui.create(method, appearance)` | カード情報入力フォームを作成します   |
+| `mount(elementId, width)`    | `ui.mount(elementId, width)`    | 指定したIDにフォームをマウントします |
+| `getFormData()`              | `ui.getFormData()`              | フォームに入力された値を取得します   |
+| `destroy()`                  | `ui.destroy()`                  | マウントしたフォームを取り除きます   |
 
 `create` の第1引数は `payments`、`cards`、`token` のいずれかです。
 

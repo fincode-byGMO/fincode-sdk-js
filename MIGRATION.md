@@ -45,11 +45,11 @@ v1 はNodeから読み込めませんでした。`require` でも `import` で�
 
 配布物の構成が変わります。
 
-| | v1 | v2 |
-|:--|:--|:--|
-| CommonJS | なし | `dist/index.js` |
-| ES Module | `dist/index.js` | `dist/index.mjs` |
-| 型 | `dist/types/index.d.ts` | `dist/index.d.ts` |
+|           | v1                      | v2                |
+| :--       | :--                     | :--               |
+| CommonJS  | なし                    | `dist/index.js`   |
+| ES Module | `dist/index.js`         | `dist/index.mjs`  |
+| 型        | `dist/types/index.d.ts` | `dist/index.d.ts` |
 
 `import { initFincode } from "@fincode/js"` のような通常の使い方は変わりません。
 `exports` マップを付けたため、`dist` 配下を直接指定していた場合は影響します。
@@ -68,8 +68,8 @@ import { CardObject } from "@fincode/js"
 
 ### 型名
 
-| v1 | v2 |
-|:--|:--|
+| v1         | v2                  |
+| :--        | :--                 |
 | `FormData` | `FincodeUIFormData` |
 
 `FormData` はDOM標準の型と同名で、`@fincode/js` から import すると標準の
@@ -80,11 +80,11 @@ import { CardObject } from "@fincode/js"
 
 APIが返すキー名と一致しておらず、常に `undefined` になっていた項目です。
 
-| v1 | v2 |
-|:--|:--|
-| `expore`（カードトークン発行） | `expire` |
-| `error_messaage`（エラー） | `error_message` |
-| `cpde_expiry_date`（決済オブジェクト） | `code_expiry_date` |
+| v1                                        | v2                   |
+| :--                                       | :--                  |
+| `expore`（カードトークン発行）            | `expire`             |
+| `error_messaage`（エラー）                | `error_message`      |
+| `cpde_expiry_date`（決済オブジェクト）    | `code_expiry_date`   |
 | `payment_result_code`（決済オブジェクト） | `paypay_result_code` |
 
 `expore` はトークンの有効期限です。現在時刻がこれを過ぎたらトークンを再発行する
@@ -94,9 +94,9 @@ APIが返すキー名と一致しておらず、常に `undefined` になって�
 
 `getFormData()` が返す有効期限の年と月は `year` / `month` です。
 
-| v1 | v2 |
-|:--|:--|
-| `expireYear` | `year` |
+| v1            | v2      |
+| :--           | :--     |
+| `expireYear`  | `year`  |
 | `expireMonth` | `month` |
 
 `expireYear` / `expireMonth` は `Appearance` 側のプレースホルダー指定のキー名で、
@@ -107,8 +107,8 @@ APIが返すキー名と一致しておらず、常に `undefined` になって�
 
 ### Appearance のフィールド
 
-| v1 | v2 |
-|:--|:--|
+| v1         | v2         |
+| :--        | :--        |
 | `labelCVC` | `labelCvc` |
 
 入力フォームが読むのは `labelCvc` です。v1 の名前で渡してもセキュリティコードの
@@ -118,14 +118,14 @@ APIが返すキー名と一致しておらず、常に `undefined` になって�
 
 ## 4. 値域が変わった型
 
-| 型 | 変更 |
-|:--|:--|
-| `PayType` | `"PayPay"` を `"Paypay"` に修正し、`"Googlepay"` を追加 |
-| `PaymentStatus` | `AWAITING_CUSTOMER_PAYMENT` / `AWAITING_PAYMENT_APPROVAL` / `EXPIRED` / `FAILED` を追加 |
-| `KonbiniCode` | `00030`（ファミリーマート）を追加 |
-| `DirectDebitResultCode` | `"7"` と `"8"` を追加 |
-| 支払方法（`method`） | `"5"`（リボ払い）を追加 |
-| `tds2_three_ds_req_auth_method` | `"06"`（FIDO認証）を追加 |
+| 型                              | 変更                                                                                    |
+| :--                             | :--                                                                                     |
+| `PayType`                       | `"PayPay"` を `"Paypay"` に修正し、`"Googlepay"` を追加                                 |
+| `PaymentStatus`                 | `AWAITING_CUSTOMER_PAYMENT` / `AWAITING_PAYMENT_APPROVAL` / `EXPIRED` / `FAILED` を追加 |
+| `KonbiniCode`                   | `00030`（ファミリーマート）を追加                                                       |
+| `DirectDebitResultCode`         | `"7"` と `"8"` を追加                                                                   |
+| 支払方法（`method`）            | `"5"`（リボ払い）を追加                                                                 |
+| `tds2_three_ds_req_auth_method` | `"06"`（FIDO認証）を追加                                                                |
 
 `PayType` の `"PayPay"` は綴りが誤っており、APIが受け付ける値が書けず、APIが弾く
 値が書ける状態でした。
@@ -197,10 +197,10 @@ ui.mount("fincode")
 
 v1 に型が無かったものです。fincodeJSは以前から公開していました。
 
-| 呼び出し方 | 説明 |
-|:--|:--|
+| 呼び出し方                                                  | 説明                                   |
+| :--                                                         | :--                                    |
 | `fincode.getCardsList(customerId, callback, errorCallback)` | 顧客が登録したカードの一覧を取得します |
-| `ui.destroy()` | マウントしたフォームを取り除きます |
+| `ui.destroy()`                                              | マウントしたフォームを取り除きます     |
 
 `getCardsList` の応答は `list` だけを持ち、ページネーション項目はありません。
 
@@ -211,15 +211,15 @@ v1 に型が無かったものです。fincodeJSは以前から公開してい�
 
 ## 8. Appearance に追加されたフィールド
 
-| フィールド | 説明 |
-|:--|:--|
-| `theme` | `fincode` または `dark` の配色 |
-| `cardId` | フォームで選択するカードのID |
-| `holderName` | カード名義人のプレースホルダー |
-| `colorBackgroundRadio` | ラジオボタンの背景色 |
-| `colorRadio` | ラジオボタンの色 |
-| `colorRadioText` | ラジオボタンのラベルの文字色 |
-| `colorSelect` | セレクトボックスの文字色 |
+| フィールド             | 説明                           |
+| :--                    | :--                            |
+| `theme`                | `fincode` または `dark` の配色 |
+| `cardId`               | フォームで選択するカードのID   |
+| `holderName`           | カード名義人のプレースホルダー |
+| `colorBackgroundRadio` | ラジオボタンの背景色           |
+| `colorRadio`           | ラジオボタンの色               |
+| `colorRadioText`       | ラジオボタンのラベルの文字色   |
+| `colorSelect`          | セレクトボックスの文字色       |
 
 色の指定は `#` を付けない16進6桁です。`theme` は個別の色指定より後に適用される
 ため、両方を渡した場合は `theme` が優先されます。
@@ -228,7 +228,7 @@ v1 に型が無かったものです。fincodeJSは以前から公開してい�
 
 ## 9. 挙動が変わったところ
 
-### 読み込み済みの fincode.js を流用します
+### fincode.js の二重読み込み
 
 v1 は、ページに既に `fincode.js` の `script` タグがあっても検出できず、
 `window.Fincode` が未定義のときは2つ目を注入していました。

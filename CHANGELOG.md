@@ -41,10 +41,10 @@ Jest、ts-node、素のES Moduleでは落ちていました。
 APIが弾く値が書ける状態でした。
 
 `getFormData` の返却型を入力フォームの実装に合わせました。有効期限の年と月は
-`expireYear` / `expireMonth` ではなく `year` / `month` で返ります。前者は
-プレースホルダー指定のキー名で、取り違えていました。従来の型では年と月が
-常に `undefined` でした。あわせて `payTimes` を任意にしました。支払方法が
-リボ払いのときは返りません。
+`year` / `month` で返ります。従来宣言していた `expireYear` / `expireMonth` は
+プレースホルダー指定のキー名で、取り違えていました。年と月が常に `undefined`
+になっていました。あわせて `payTimes` を任意にしました。支払方法がリボ払いの
+ときは返りません。
 
 `Appearance` の `labelCVC` を `labelCvc` にしました。入力フォームが読むのは
 `labelCvc` で、旧名を渡しても効きませんでした。
