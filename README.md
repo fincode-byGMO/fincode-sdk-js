@@ -147,7 +147,7 @@ fincodeJSに決済手段API用の関数が無いため、fincodeインスタン�
 | :------------- | :------------ |
 | カード         | `EC013136002` |
 | 口座振替       | `EF010524002` |
-| バーチャル口座 | `EG009548002` |
+| 固定バーチャル口座 | `EG009548002` |
 
 ### `executePayment`
 UIコンポーネントに入力されているカード情報をもとに決済実行JS（`payments()`）を呼び出します。
@@ -285,9 +285,9 @@ window.location.href = paymentMethod.redirect_url
 
 ゆうちょ銀行（`bankCode` が `9900`）の場合は、`branchCode` と `accountNumber` の代わりに `postalAccountNumber1` と `postalAccountNumber2` を指定します。
 
-#### バーチャル口座
+#### 固定バーチャル口座
 
-顧客に対して発行するバーチャル口座を登録します。口座はfincodeが払い出すため、お客様から収集する情報はありません。
+顧客に対して発行する固定バーチャル口座を登録します。口座はfincodeが払い出すため、お客様から収集する情報はありません。
 
 ```ts
 const paymentMethod = await registerPaymentMethod({
