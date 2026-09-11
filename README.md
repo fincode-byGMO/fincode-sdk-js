@@ -163,9 +163,51 @@ import { getCardToken } from "@fincode/js"
 })()
 ```
 
+### `registerCardPaymentMethod`
+UIコンポーネントに入力されているカード情報を、顧客の決済手段として登録します。
+Promiseを返し、解決時には決済手段オブジェクト（`CardPaymentMethodObject`）を返します。
+
+決済手段の登録にはカードトークンが必要なため、この関数が内部で `tokens()` を呼んでトークンを発行します。
+
+```ts
+import { registerCardPaymentMethod } from "@fincode/js"
+
+(async () => {
+    const paymentMethod = await registerCardPaymentMethod({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        ui: ui, // fincode UI instance (FincodeUI)
+        customerId: "<Customer ID>", // customer id to register the payment method (string)
+        useDefault: true, // use the payment method as default or not (boolean)
+    })
+})()
+```
+
+`tdsType` に `"2"` を渡すと、登録時に3Dセキュア認証を行います。この場合は `returnUrl` の指定が必須です。
+
+```ts
+const paymentMethod = await registerCardPaymentMethod({
+    fincode, ui,
+    customerId: "<Customer ID>",
+    tdsType: "2",
+    returnUrl: "https://example.com/complete",
+    returnUrlOnFailure: "https://example.com/failure",
+})
+
+// status は AWAITING_CUSTOMER_ACTION になり、redirect_url が返る
+window.location.href = paymentMethod.redirect_url
+```
+
+お客様を `redirect_url` へ誘導して認証を完了させてください。`tdsType` を渡さない場合は認証なしで登録され、`status` は `ACTIVATED` になります。
+
+対象はカードのみです。fincodeJS のUIコンポーネントがカード情報の入力フォームであるため、口座振替やバーチャル口座の決済手段はこの関数では登録できません。
+
+この関数は fincodeJS のラッパーではありません。fincodeJS に決済手段API用の関数が無いため、fincodeインスタンスが持つパブリックキーとヘッダーを使って自身でリクエストを送ります。`setTenantShopId` と `setIdempotentKey` で設定した値は反映されます。
+
 ### `registerCard`
 UIコンポーネントに入力されているカード情報をもとにカードを登録します。
 Promiseを返し、解決時には登録されたカードオブジェクト（`CardObject`）を返します。
+
+カードAPIを呼び出します。決済手段として登録したい場合は `registerCardPaymentMethod` を使用してください。
 
 ```ts
 import { registerCard } from "@fincode/js"

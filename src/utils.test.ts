@@ -11,6 +11,12 @@ const uiReturning = (formData: Partial<FormDataOf>): FincodeUI => ({
     destroy: jest.fn(),
 })
 
+const stubConfig = {
+    api: { host: "https://api.test.fincode.jp/", context: "v1" },
+    headers: { accept: "application/json", contentType: "application/json", tenantShopId: "", idempotentKey: "" },
+    apiKey: "p_test_0000000000000000",
+}
+
 /**
  * fincode インスタンスのスタブ。
  *
@@ -19,6 +25,7 @@ const uiReturning = (formData: Partial<FormDataOf>): FincodeUI => ({
  * 成功コールバックには HTTP ステータスとレスポンスが渡される。
  */
 const fincodeReturning = (status: number, response: unknown): FincodeInstance => ({
+    config: stubConfig,
     tokens: jest.fn((_card, callback) => callback(status, response as TokenIssuingResponse)),
     cards: jest.fn((_card, callback) => callback(status, response as CardObject)),
     payments: jest.fn((_tx, callback) => callback(status, response as PaymentObject)),
@@ -29,6 +36,7 @@ const fincodeReturning = (status: number, response: unknown): FincodeInstance =>
 })
 
 const fincodeFailing = (): FincodeInstance => ({
+    config: stubConfig,
     tokens: jest.fn((_card, _callback, errorCallback) => errorCallback()),
     cards: jest.fn((_card, _callback, errorCallback) => errorCallback()),
     payments: jest.fn((_tx, _callback, errorCallback) => errorCallback()),

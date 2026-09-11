@@ -35,7 +35,56 @@ export type FincodePaymentTransaction = Payment.ExecutingPaymentRequest & {
      */
     holder_name?: string | null
 }
+/**
+ * Settings fincodeJS builds its requests from.
+ *
+ * `setTenantShopId` and `setIdempotentKey` write into `headers`, so reading
+ * this is how you pick up what the caller set.
+ */
+export type FincodeConfig = {
+    api: {
+        /**
+         * API host, with a trailing slash.
+         *
+         * e.g. `https://api.test.fincode.jp/`
+         */
+        host: string
+
+        /**
+         * API version segment of the path.
+         *
+         * e.g. `v1`
+         */
+        context: string
+    }
+
+    headers: {
+        accept: string
+        contentType: string
+
+        /**
+         * Empty string until `setTenantShopId` is called.
+         */
+        tenantShopId: string
+
+        /**
+         * Empty string until `setIdempotentKey` is called.
+         */
+        idempotentKey: string
+    }
+
+    /**
+     * Public key passed to `Fincode(publicKey)`.
+     */
+    apiKey: string
+}
+
 export type FincodeInstance = {
+    /**
+     * Settings this instance was built with.
+     */
+    config: FincodeConfig
+
     tokens: (
         card: {
             card_no: string,
