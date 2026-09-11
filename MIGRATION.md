@@ -235,3 +235,50 @@ v1 は、ページに既に `fincode.js` の `script` タグがあっても検�
 
 v2 は既存のタグを見つけて流用します。`script` タグを自分で置いたうえで
 `initFincode` を呼んでいた場合、読み込みが1回になります。
+
+---
+
+## 10. 読み込む環境の指定
+
+`isLiveMode` に代わって `environment` を追加しました。`"test"` と `"prod"` を取り、
+省略すると `"test"` になります。APIキーの接頭辞（`p_test_` / `p_prod_`）と同じ語です。
+
+```ts
+// v1
+initFincode({ publicKey: "...", isLiveMode: true })
+
+// v2
+initFincode({ publicKey: "...", environment: "prod" })
+```
+
+`isLiveMode` も引き続き使えます。`@deprecated` を付けてあるので、エディタ上では
+取り消し線で表示されます。両方を指定した場合は `environment` が優先されます。
+
+`FincodeEnv` 型も `@deprecated` にしました。v1 から公開されていましたが、
+`initFincode` はこれを使っておらず、値の `"live"` も `environment` が受ける
+`"prod"` と食い違っています。
+
+### 読み込み元をURLで指定する
+
+`scriptUrl` を追加しました。テストでスタブに差し替える場合などに使います。
+
+```ts
+initFincode({ publicKey: "...", scriptUrl: "https://js.example.com/fincode.js" })
+```
+
+`https` 以外のURLと、資格情報を含むURL（`https://user:pw@host`）は受け付けません。
+読み込んだスクリプトはページ上で実行されるため、外部から渡された値をそのまま
+指定しないでください。
+
+`environment` や `isLiveMode` との同時指定はエラーになります。URLで指定する場合は
+`environment` を外してください。消し忘れた `scriptUrl` が `environment` を上書きして
+しまうと、本番のページに別のスクリプトが読み込まれたまま気づけません。
+
+### 読み込み済みスクリプトの流用条件
+
+v1 は `js.fincode.jp` と `js.test.fincode.jp` のどちらのスクリプトにも一致して
+いました。このため本番環境を指定しても、ページにテスト環境のスクリプトがあれば
+そちらを流用し、テスト環境へ通信していました。
+
+v2 は読み込もうとしているURLと完全に一致するものだけを流用します。テスト環境と
+本番環境のスクリプトを同じページに置いていた場合だけ、読み込みが1回増えます。

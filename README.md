@@ -35,7 +35,7 @@ const main = async () => {
 
     const fincode = await initFincode({
         publicKey: "p_****_**********", // Public key
-        isLiveMode: true, // fincode Environment
+        environment: "prod", // "test" or "prod". default: "test"
     })
 
     // mount fincode payment UI form
@@ -63,6 +63,33 @@ const main = async () => {
     <button id="submit">お支払い</button>
 </form>
 ```
+
+### 3. 読み込む環境の指定
+
+`environment` に `"test"` または `"prod"` を指定します。省略すると `"test"` です。
+APIキーの接頭辞（`p_test_` / `p_prod_`）と同じ語です。
+
+| `environment` | 読み込むスクリプト                         |
+| :--           | :--                                        |
+| `"test"`      | `https://js.test.fincode.jp/v1/fincode.js` |
+| `"prod"`      | `https://js.fincode.jp/v1/fincode.js`      |
+
+読み込み元をURLで直接指定する場合は `scriptUrl` を使います。`environment` との
+同時指定はエラーになります。
+
+```js
+const fincode = await initFincode({
+    publicKey: "p_****_**********",
+    scriptUrl: "https://js.example.com/fincode.js",
+})
+```
+
+`https` 以外のURLと、資格情報を含むURL（`https://user:pw@host`）は受け付けません。
+読み込んだスクリプトはページ上で実行されるため、外部から渡された値をそのまま
+指定しないでください。
+
+`isLiveMode` も引き続き使えますが非推奨です。両方指定した場合は `environment` が
+優先されます。
 
 ## Call fincodeJS
 
@@ -143,10 +170,10 @@ fincodeJSに決済手段API用の関数が無いため、fincodeインスタン�
 
 決済手段の登録は、その決済種別で最初の1件を `useDefault: true` で登録する必要があります。指定しない場合、APIが次のエラーを返します。
 
-| 決済種別       | エラーコード  |
-| :------------- | :------------ |
-| カード         | `EC013136002` |
-| 口座振替       | `EF010524002` |
+| 決済種別           | エラーコード  |
+| :----------------- | :------------ |
+| カード             | `EC013136002` |
+| 口座振替           | `EF010524002` |
 | 固定バーチャル口座 | `EG009548002` |
 
 ### `executePayment`
