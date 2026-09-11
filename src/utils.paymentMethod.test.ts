@@ -1,4 +1,4 @@
-import { registerCardPaymentMethod, registerDirectDebitPaymentMethod, registerVirtualAccountPaymentMethod } from "./utils"
+import { registerPaymentMethod, type RegisteringPaymentMethodArgs } from "./utils"
 import { FincodeInstance, FincodeUI } from "./js"
 import { TokenIssuingResponse } from "./api"
 
@@ -63,11 +63,12 @@ afterEach(() => {
     jest.restoreAllMocks()
 })
 
-describe("registerCardPaymentMethod", () => {
+describe("registerPaymentMethod: Card", () => {
     it("決済手段APIのURLへ POST する", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x", status: "ACTIVATED" }))
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -82,7 +83,8 @@ describe("registerCardPaymentMethod", () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x" }))
         const fincode = stubFincode()
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode,
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -98,7 +100,8 @@ describe("registerCardPaymentMethod", () => {
     it("公開鍵を Authorization ヘッダに載せる", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x" }))
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -113,7 +116,8 @@ describe("registerCardPaymentMethod", () => {
     it("setTenantShopId と setIdempotentKey の設定を引き継ぐ", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x" }))
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode({
                 headers: {
                     accept: "application/json",
@@ -135,7 +139,8 @@ describe("registerCardPaymentMethod", () => {
     it("設定されていないヘッダは送らない", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x" }))
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -149,7 +154,8 @@ describe("registerCardPaymentMethod", () => {
     it("useDefault を default_flag に移す", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "cs_x" }))
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -157,7 +163,8 @@ describe("registerCardPaymentMethod", () => {
         })
         expect(lastRequest().body.default_flag).toBe("1")
 
-        await registerCardPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -170,7 +177,8 @@ describe("registerCardPaymentMethod", () => {
             jsonResponse(200, { id: "cs_x", status: "AWAITING_CUSTOMER_ACTION", redirect_url: "https://3ds" }),
         )
 
-        const res = await registerCardPaymentMethod({
+        const res = await registerPaymentMethod({
+            payType: "Card",
             fincode: stubFincode(),
             ui: uiReturning(NEW_CARD_FORM),
             customerId: "c_0000000000",
@@ -187,7 +195,8 @@ describe("registerCardPaymentMethod", () => {
 
     it("tdsType が 2 で returnUrl が無ければ送信せずに落とす", async () => {
         await expect(
-            registerCardPaymentMethod({
+            registerPaymentMethod({
+                payType: "Card",
                 fincode: stubFincode(),
                 ui: uiReturning(NEW_CARD_FORM),
                 customerId: "c_0000000000",
@@ -200,7 +209,8 @@ describe("registerCardPaymentMethod", () => {
 
     it("customerId が空なら送信せずに落とす", async () => {
         await expect(
-            registerCardPaymentMethod({
+            registerPaymentMethod({
+                payType: "Card",
                 fincode: stubFincode(),
                 ui: uiReturning(NEW_CARD_FORM),
                 customerId: "",
@@ -212,7 +222,8 @@ describe("registerCardPaymentMethod", () => {
 
     it("カード番号が無ければトークン発行の段階で落ちる", async () => {
         await expect(
-            registerCardPaymentMethod({
+            registerPaymentMethod({
+                payType: "Card",
                 fincode: stubFincode(),
                 ui: uiReturning({ ...NEW_CARD_FORM, cardNo: undefined }),
                 customerId: "c_0000000000",
@@ -227,7 +238,8 @@ describe("registerCardPaymentMethod", () => {
         fetchMock().mockResolvedValue(jsonResponse(400, errors))
 
         await expect(
-            registerCardPaymentMethod({
+            registerPaymentMethod({
+                payType: "Card",
                 fincode: stubFincode(),
                 ui: uiReturning(NEW_CARD_FORM),
                 customerId: "c_0000000000",
@@ -239,7 +251,8 @@ describe("registerCardPaymentMethod", () => {
         fetchMock().mockRejectedValue(new TypeError("Failed to fetch"))
 
         await expect(
-            registerCardPaymentMethod({
+            registerPaymentMethod({
+                payType: "Card",
                 fincode: stubFincode(),
                 ui: uiReturning(NEW_CARD_FORM),
                 customerId: "c_0000000000",
@@ -248,11 +261,12 @@ describe("registerCardPaymentMethod", () => {
     })
 })
 
-describe("registerDirectDebitPaymentMethod", () => {
+describe("registerPaymentMethod: Directdebit", () => {
     it("口座情報を directdebit ブロックに移す", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x", pay_type: "Directdebit" }))
 
-        await registerDirectDebitPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Directdebit",
             fincode: stubFincode(),
             customerId: "c_0000000000",
             useDefault: true,
@@ -285,7 +299,8 @@ describe("registerDirectDebitPaymentMethod", () => {
 
     it("ONLINE で returnUrl が無ければ送信せずに落とす", async () => {
         await expect(
-            registerDirectDebitPaymentMethod({
+            registerPaymentMethod({
+                payType: "Directdebit",
                 fincode: stubFincode(),
                 customerId: "c_0000000000",
                 applicationType: "ONLINE",
@@ -299,7 +314,8 @@ describe("registerDirectDebitPaymentMethod", () => {
 
     it("PAPER で requestFormId が無ければ送信せずに落とす", async () => {
         await expect(
-            registerDirectDebitPaymentMethod({
+            registerPaymentMethod({
+                payType: "Directdebit",
                 fincode: stubFincode(),
                 customerId: "c_0000000000",
                 applicationType: "PAPER",
@@ -314,7 +330,8 @@ describe("registerDirectDebitPaymentMethod", () => {
     it("PAPER では requestFormId を paper_application に入れる", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
 
-        await registerDirectDebitPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Directdebit",
             fincode: stubFincode(),
             customerId: "c_0000000000",
             applicationType: "PAPER",
@@ -329,7 +346,8 @@ describe("registerDirectDebitPaymentMethod", () => {
     it("ONLINE では paper_application を送らない", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
 
-        await registerDirectDebitPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Directdebit",
             fincode: stubFincode(),
             customerId: "c_0000000000",
             applicationType: "ONLINE",
@@ -345,7 +363,8 @@ describe("registerDirectDebitPaymentMethod", () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
         const fincode = stubFincode()
 
-        await registerDirectDebitPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Directdebit",
             fincode,
             customerId: "c_0000000000",
             applicationType: "ONLINE",
@@ -358,11 +377,12 @@ describe("registerDirectDebitPaymentMethod", () => {
     })
 })
 
-describe("registerVirtualAccountPaymentMethod", () => {
+describe("registerPaymentMethod: Virtualaccount", () => {
     it("決済種別とデフォルトフラグだけを送る", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x", pay_type: "Virtualaccount" }))
 
-        await registerVirtualAccountPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Virtualaccount",
             fincode: stubFincode(),
             customerId: "c_0000000000",
             useDefault: true,
@@ -378,7 +398,7 @@ describe("registerVirtualAccountPaymentMethod", () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
         const fincode = stubFincode()
 
-        await registerVirtualAccountPaymentMethod({ fincode, customerId: "c_0000000000" })
+        await registerPaymentMethod({ payType: "Virtualaccount", fincode, customerId: "c_0000000000" })
 
         expect(fincode.tokens).not.toHaveBeenCalled()
         expect(fincode.ui).not.toHaveBeenCalled()
@@ -386,7 +406,7 @@ describe("registerVirtualAccountPaymentMethod", () => {
 
     it("customerId が空なら送信せずに落とす", async () => {
         await expect(
-            registerVirtualAccountPaymentMethod({ fincode: stubFincode(), customerId: "" }),
+            registerPaymentMethod({ payType: "Virtualaccount", fincode: stubFincode(), customerId: "" }),
         ).rejects.toThrow("customerId is required")
 
         expect(global.fetch).not.toHaveBeenCalled()
@@ -395,7 +415,8 @@ describe("registerVirtualAccountPaymentMethod", () => {
     it("3つのヘルパーが同じURLとヘッダを組む", async () => {
         fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
 
-        await registerVirtualAccountPaymentMethod({
+        await registerPaymentMethod({
+            payType: "Virtualaccount",
             fincode: stubFincode({
                 headers: {
                     accept: "application/json",
@@ -410,5 +431,58 @@ describe("registerVirtualAccountPaymentMethod", () => {
         const { url, init } = lastRequest()
         expect(url).toBe("https://api.test.fincode.jp/v1/customers/c_0000000000/payment_methods")
         expect(init.headers).toMatchObject({ "Tenant-Shop-Id": "s_0000000000" })
+    })
+})
+
+describe("registerPaymentMethod の型", () => {
+    it("payType ごとに必須項目が変わる", () => {
+        const card = (fincode: FincodeInstance, ui: FincodeUI) =>
+            // @ts-expect-error カードは ui が必須
+            registerPaymentMethod({ payType: "Card", fincode, customerId: "c_x" }) && ui
+
+        const directdebit = (fincode: FincodeInstance) =>
+            // @ts-expect-error 口座振替は applicationType / bankCode / accountNameKana が必須
+            registerPaymentMethod({ payType: "Directdebit", fincode, customerId: "c_x" })
+
+        const virtualaccount = (fincode: FincodeInstance) =>
+            // バーチャル口座は追加の項目が要らない
+            registerPaymentMethod({ payType: "Virtualaccount", fincode, customerId: "c_x" })
+
+        expect([card, directdebit, virtualaccount].every((f) => typeof f === "function")).toBe(true)
+    })
+
+    it("payType に応じた戻り値の型になる", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "x" }))
+        const fincode = stubFincode()
+
+        const card = await registerPaymentMethod({
+            payType: "Card", fincode, ui: uiReturning(NEW_CARD_FORM), customerId: "c_x",
+        })
+        void card.card
+
+        const va = await registerPaymentMethod({ payType: "Virtualaccount", fincode, customerId: "c_x" })
+        void va.virtualaccount
+        // @ts-expect-error バーチャル口座の戻り値に card は無い
+        void va.card
+
+        expect(true).toBe(true)
+    })
+
+    it("payType が確定しない場合は共用体が返る", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "x" }))
+
+        // 引数が共用体のままなら、広いオーバーロードが選ばれる
+        const call = (args: RegisteringPaymentMethodArgs) => registerPaymentMethod(args)
+
+        const pm = await call({
+            payType: "Virtualaccount", fincode: stubFincode(), customerId: "c_x",
+        })
+
+        // 絞り込まないと決済種別ごとの項目は読めない
+        // @ts-expect-error 共用体のままでは card は読めない
+        void pm.card
+        if (pm.pay_type === "Card") void pm.card
+
+        expect(pm).toBeDefined()
     })
 })

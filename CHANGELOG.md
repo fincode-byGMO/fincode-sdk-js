@@ -63,19 +63,24 @@ READMEのサンプルコードを直しました。`ui.create("payment", ...)` �
 
 ### 追加
 
-決済手段を登録するユーティリティ関数を3つ追加しました。`registerCardPaymentMethod`、
-`registerDirectDebitPaymentMethod`、`registerVirtualAccountPaymentMethod` です。
+決済手段を登録する `registerPaymentMethod` を追加しました。`payType` によって
+必要な情報と戻り値の型が変わります。
+
+| `payType`        | 必要な情報                     | 戻り値の型                          |
+| :--              | :--                            | :--                                 |
+| `Card`           | マウント済みのUIコンポーネント | `CardPaymentMethodObject`           |
+| `Directdebit`    | 口座情報（引数で渡す）         | `DirectDebitPaymentMethodObject`    |
+| `Virtualaccount` | なし                           | `VirtualAccountPaymentMethodObject` |
 
 これまで登録時の3Dセキュア認証を行う手段がありませんでした。`registerCard` が
 呼ぶ `fincode.cards()` はカードAPIで、`tds_type` を受け取りません。
 
-fincodeJSは決済手段API用の関数を持たないため、この3つはfincodeインスタンスが持つ
+fincodeJSは決済手段API用の関数を持たないため、この関数はfincodeインスタンスが持つ
 パブリックキーとヘッダーを使って自身でリクエストを送ります。送り方はfincodeJSに
 揃えてあり、`setTenantShopId` と `setIdempotentKey` で設定した値は反映されます。
 
-決済手段の型も追加しました。`PaymentMethodObject` は `pay_type` で判別する共用体で、
-カード（`CardPaymentMethodObject`）、口座振替（`DirectDebitPaymentMethodObject`）、
-バーチャル口座（`VirtualAccountPaymentMethodObject`）の3つに分かれます。
+決済手段の型も追加しました。`PaymentMethodObject` は `pay_type` で判別する共用体
+です。
 
 `getCardsList` を追加しました。顧客が登録したカードの一覧を取得します。
 `ui.destroy` も追加しました。マウントしたフォームを取り除きます。どちらも
@@ -84,26 +89,52 @@ fincodeJSは公開しているのに型がありませんでした。
 `FincodeInstance` に `config` を追加しました。fincodeJSが返すオブジェクトは
 APIのホストとヘッダー、パブリックキーを持っていますが、型にありませんでした。
 
-`Appearance` に7項目を追加しました。`theme`、`cardId`、`holderName`、
-`colorBackgroundRadio`、`colorRadio`、`colorRadioText`、`colorSelect` です。
-これで入力フォームが受け取る31項目のうち30項目を指定できます。
+`Appearance` に7項目を追加しました。これで入力フォームが受け取る31項目のうち
+30項目を指定できます。
 
-`CardObject` に洗替の3項目（`card_updater_mode`、
-`card_updater_last_success_date`、`card_updater_last_attempt_date`）を
-追加しました。これで実APIの返却項目と過不足なく一致します。
+| 項目                   | 指定するもの                   |
+| :--                    | :--                            |
+| `theme`                | `fincode` または `dark` の配色 |
+| `cardId`               | フォームで選択するカードのID   |
+| `holderName`           | カード名義人のプレースホルダー |
+| `colorBackgroundRadio` | ラジオボタンの背景色           |
+| `colorRadio`           | ラジオボタンの色               |
+| `colorRadioText`       | ラジオボタンのラベルの文字色   |
+| `colorSelect`          | セレクトボックスの文字色       |
 
-`PaymentObject` に `bill_id`、`settlement_route`、`use_exact_deposit_amount`、
-`use_static_virtual_account` の4項目を追加しました。
+`CardObject` に洗替の3項目を追加しました。これで実APIの返却項目と過不足なく
+一致します。
 
-enum に不足していた値を追加しました。`PaymentStatus` の
-`AWAITING_CUSTOMER_PAYMENT` / `AWAITING_PAYMENT_APPROVAL` / `EXPIRED` /
-`FAILED`、`PayType` の `Googlepay`、`KonbiniCode` の `00030`、
-`DirectDebitResultCode` の `"7"` と `"8"`、支払方法の `"5"`、
-`tds2_three_ds_req_auth_method` の `"06"` です。後ろ2つはJSDocが説明している
-のに値域に無い状態でした。
+- `card_updater_mode`
+- `card_updater_last_success_date`
+- `card_updater_last_attempt_date`
 
-`CardUpdaterMode` と `DirectDebitSettlementRoute` と
-`RetrievingCardListResponse` を追加しました。
+`PaymentObject` に4項目を追加しました。
+
+- `bill_id`
+- `settlement_route`
+- `use_exact_deposit_amount`
+- `use_static_virtual_account`
+
+enum に不足していた値を追加しました。
+
+| 型                              | 追加した値                                                                       |
+| :--                             | :--                                                                              |
+| `PaymentStatus`                 | `AWAITING_CUSTOMER_PAYMENT` / `AWAITING_PAYMENT_APPROVAL` / `EXPIRED` / `FAILED` |
+| `PayType`                       | `Googlepay`                                                                      |
+| `KonbiniCode`                   | `00030`                                                                          |
+| `DirectDebitResultCode`         | `"7"` / `"8"`                                                                    |
+| 支払方法（`method`）            | `"5"`                                                                            |
+| `tds2_three_ds_req_auth_method` | `"06"`                                                                           |
+
+支払方法の `"5"` と `tds2_three_ds_req_auth_method` の `"06"` は、JSDocが説明して
+いるのに値域に無い状態でした。
+
+型を3つ追加しました。
+
+- `CardUpdaterMode`
+- `DirectDebitSettlementRoute`
+- `RetrievingCardListResponse`
 
 ### 変更
 
@@ -121,12 +152,19 @@ DOM標準の型と衝突します。旧名は別名として残し `@deprecated`
 
 ### テスト
 
-テストが1件もありませんでした。58件追加しました。
+テストが1件もありませんでした。83件追加しました。いずれも認証情報なしで動きます。
 
-読み込み処理は、引数の検証、読み込み済みの場合の即時解決、テスト環境と本番環境の
-出し分け、`load` と `error` の扱い、`window` や `head` が無い環境での挙動、
-二重注入をしないことを確かめます。ユーティリティ関数はfincodeインスタンスと
-UIコンポーネントをスタブにして確かめます。いずれも認証情報なしで動きます。
+読み込み処理について確かめることは次のとおりです。
+
+- 引数の検証
+- 読み込み済みの場合の即時解決
+- テスト環境と本番環境の出し分け
+- `load` と `error` の扱い
+- `window` や `head` が無い環境での挙動
+- 読み込み済みのスクリプトを二重に注入しないこと
+
+ユーティリティ関数は、fincodeインスタンスとUIコンポーネントをスタブにして
+確かめます。
 
 ## 1.1.0 以前
 

@@ -134,7 +134,7 @@ export type PaymentMethodCard = {
 /**
  * Payment method of a customer, registered with a card.
  *
- * Returned by `registerCardPaymentMethod`.
+ * Returned by `registerPaymentMethod` with `payType: "Card"`.
  */
 export type CardPaymentMethodObject = {
     /**
@@ -426,7 +426,7 @@ export type PaymentMethodVirtualAccount = {
  * Payment method of a customer, registered with a bank account for direct
  * debit.
  *
- * Returned by `registerDirectDebitPaymentMethod`.
+ * Returned by `registerPaymentMethod` with `payType: "Directdebit"`.
  */
 export type DirectDebitPaymentMethodObject = Omit<CardPaymentMethodObject, "pay_type" | "card"> & {
     pay_type: "Directdebit"
@@ -449,7 +449,7 @@ export type DirectDebitPaymentMethodObject = Omit<CardPaymentMethodObject, "pay_
  * Payment method of a customer, registered as a virtual account fixed to
  * that customer.
  *
- * Returned by `registerVirtualAccountPaymentMethod`.
+ * Returned by `registerPaymentMethod` with `payType: "Virtualaccount"`.
  */
 export type VirtualAccountPaymentMethodObject =
     Omit<CardPaymentMethodObject, "pay_type" | "card" | "redirect_url" | "return_url" | "return_url_on_failure"> & {
@@ -470,3 +470,11 @@ export type PaymentMethodObject =
     | CardPaymentMethodObject
     | DirectDebitPaymentMethodObject
     | VirtualAccountPaymentMethodObject
+
+/**
+ * Payment method types the payment method API accepts.
+ *
+ * `Paypay` and `Amazonpay` appear in the API reference but the API rejects
+ * them with `EP014023002`.
+ */
+export type PaymentMethodPayType = "Card" | "Directdebit" | "Virtualaccount"
