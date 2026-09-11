@@ -35,7 +35,56 @@ export type FincodePaymentTransaction = Payment.ExecutingPaymentRequest & {
      */
     holder_name?: string | null
 }
+/**
+ * Settings fincodeJS builds its requests from.
+ *
+ * `setTenantShopId` and `setIdempotentKey` write into `headers`, so reading
+ * this is how you pick up what the caller set.
+ */
+export type FincodeConfig = {
+    api: {
+        /**
+         * API host, with a trailing slash.
+         *
+         * e.g. `https://api.test.fincode.jp/`
+         */
+        host: string
+
+        /**
+         * API version segment of the path.
+         *
+         * e.g. `v1`
+         */
+        context: string
+    }
+
+    headers: {
+        accept: string
+        contentType: string
+
+        /**
+         * Empty string until `setTenantShopId` is called.
+         */
+        tenantShopId: string
+
+        /**
+         * Empty string until `setIdempotentKey` is called.
+         */
+        idempotentKey: string
+    }
+
+    /**
+     * Public key passed to `Fincode(publicKey)`.
+     */
+    apiKey: string
+}
+
 export type FincodeInstance = {
+    /**
+     * Settings this instance was built with.
+     */
+    config: FincodeConfig
+
     tokens: (
         card: {
             card_no: string,
@@ -48,17 +97,23 @@ export type FincodeInstance = {
         errorCallback: () => void,
     ) => void
 
+    /**
+     * Registers a new card, or updates one that is already registered.
+     *
+     * Passing `card_id` updates that card. Leaving it out registers a new one.
+     */
     cards: (
-        card: {
-            card_id?: string
-            customer_id: string,
-            default_flag?: "0" | "1",
-            card_no?: string,
-            expire?: string,
-            security_code?: string,
-            holder_name?: string,
-        },
+        card: Card.RegisteringCardRequest | Card.UpdatingCardRequest,
         callback: (status: number, response: Card.CardObject) => void,
+        errorCallback: () => void,
+    ) => void
+
+    /**
+     * Lists the cards a customer has registered.
+     */
+    getCardsList: (
+        customerId: string,
+        callback: (status: number, response: Card.RetrievingCardListResponse) => void,
         errorCallback: () => void,
     ) => void
 
@@ -73,4 +128,16 @@ export type FincodeInstance = {
     setTenantShopId: (tenantShopId: string) => void
 
     setIdempotentKey: (idempotencyKey: string) => void
+}
+
+declare global {
+    interface Window {
+        /**
+         * Initializer that fincode.js assigns when it finishes loading.
+         *
+         * Undefined until then, so check it before calling. `initFincode`
+         * handles the loading and the check for you.
+         */
+        Fincode?: FincodeInitializer
+    }
 }

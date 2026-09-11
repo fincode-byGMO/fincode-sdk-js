@@ -7,8 +7,6 @@
 
 dist
 
-.github
-
 node_modules
 
 .vim

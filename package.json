@@ -1,6 +1,6 @@
 {
   "name": "@fincode/js",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "keyword": [
     "fincode",
     "fincodebygmo",
@@ -8,7 +8,7 @@
     "gmoepsilon"
   ],
   "main": "./dist/index.js",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/index.d.ts",
   "author": "GMO Epsilon, Inc.",
   "license": "MIT",
   "private": false,
@@ -20,24 +20,31 @@
   "bugs": {
     "url": "https://github.com/fincode-byGMO/fincode-sdk-js/issues"
   },
-  "packageManager": "pnpm@8.15.1",
   "devDependencies": {
     "@types/jest": "^29.0.0",
+    "@types/node": "^20",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
     "eslint": "^8.31.0",
     "eslint-plugin-jest": "^27.2.1",
     "jest": "^29.0.0",
+    "jest-environment-jsdom": "^29",
     "ts-jest": "^29.0.0",
+    "tsup": "^8.1.0",
     "typescript": "^4.9.4"
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md",
+    "MIGRATION.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint . --ext .ts,.js"
+    "build": "tsup",
+    "typecheck": "tsc -p tsconfig.test.json",
+    "lint": "eslint . --ext .ts,.js",
+    "test": "jest"
   },
   "keywords": [
     "fincode",
@@ -45,5 +52,14 @@
     "gmo",
     "gmoepsilon",
     "fincode-sdk-js"
-  ]
+  ],
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "sideEffects": false
 }
