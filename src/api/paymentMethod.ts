@@ -1,4 +1,5 @@
 import { CardBrand, CardType, CardUpdaterMode } from "./card"
+import { DirectDebitResultCode, DirectDebitSettlementRoute } from "./payment"
 
 /**
  * Status of a payment method.
@@ -233,3 +234,239 @@ export type CardPaymentMethodObject = {
      */
     updated?: string | null
 }
+
+/**
+ * How the bank account of a direct debit payment method was applied for.
+ *
+ * - `PAPER`: registered with a paper request form.
+ * - `ONLINE`: registered on the web.
+ */
+export type DirectDebitApplicationType = "PAPER" | "ONLINE"
+
+/**
+ * Deposit type of the bank account.
+ *
+ * - `1`: ordinary deposit
+ * - `2`: current deposit
+ */
+export type DirectDebitAccountType = "1" | "2"
+
+/**
+ * Whether the bank is Japan Post Bank.
+ *
+ * - `0`: a bank other than Japan Post Bank
+ * - `1`: Japan Post Bank
+ */
+export type DirectDebitBankType = "0" | "1"
+
+/**
+ * Paper request form the bank account was registered with.
+ */
+export type DirectDebitPaperApplication = {
+    /**
+     * Date the request form was pre-registered.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    preregistered_date?: string | null
+
+    /**
+     * ID of the request form.
+     */
+    request_form_id?: string | null
+
+    /**
+     * Why the paper application failed, when it did.
+     */
+    paper_failure_description?: string | null
+}
+
+/**
+ * Bank account details of a direct debit payment method.
+ */
+export type PaymentMethodDirectDebit = {
+    /**
+     * How this bank account was applied for.
+     */
+    application_type: DirectDebitApplicationType
+
+    /**
+     * Transfer service this bank account is registered with.
+     */
+    settlement_route?: DirectDebitSettlementRoute | null
+
+    /**
+     * Date the next debit is expected to be taken.
+     */
+    expected_billable_date?: string | null
+
+    /**
+     * Date the last debit was taken.
+     */
+    last_withdrawal_date?: string | null
+
+    /**
+     * Result code of the last debit taken with this payment method.
+     */
+    last_result_code?: DirectDebitResultCode | null
+
+    /**
+     * Whether the bank is Japan Post Bank.
+     */
+    bank_type?: DirectDebitBankType | null
+
+    /**
+     * Bank code.
+     */
+    bank_code?: string | null
+
+    /**
+     * Bank name.
+     */
+    bank_name?: string | null
+
+    /**
+     * Branch code.
+     */
+    branch_code?: string | null
+
+    /**
+     * Branch name.
+     */
+    branch_name?: string | null
+
+    /**
+     * Deposit type of the bank account.
+     */
+    account_type?: DirectDebitAccountType | null
+
+    /**
+     * Account number.
+     */
+    account_number?: string | null
+
+    /**
+     * Symbol of the Japan Post Bank account.
+     */
+    postal_account_number_1?: string | null
+
+    /**
+     * Number of the Japan Post Bank account.
+     */
+    postal_account_number_2?: string | null
+
+    /**
+     * Account holder's name.
+     */
+    account_name?: string | null
+
+    /**
+     * Account holder's name in half-width katakana.
+     */
+    account_name_kana?: string | null
+
+    /**
+     * Paper request form this bank account was registered with.
+     */
+    paper_application?: DirectDebitPaperApplication | null
+}
+
+/**
+ * Virtual account details of a virtual account payment method.
+ */
+export type PaymentMethodVirtualAccount = {
+    /**
+     * Branch code of the virtual account.
+     */
+    va_branch_code?: string | null
+
+    /**
+     * Branch name of the virtual account.
+     */
+    va_branch_name?: string | null
+
+    /**
+     * Account number of the virtual account.
+     */
+    va_account_number?: string | null
+
+    /**
+     * Account holder name of the virtual account.
+     */
+    va_account_name?: string | null
+
+    /**
+     * Virtual account identifier.
+     */
+    virtual_account_id?: string | null
+
+    /**
+     * Date this virtual account was assigned.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    account_assignment_date?: string | null
+
+    /**
+     * Date this virtual account was last activated.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    last_activated_date?: string | null
+
+    /**
+     * Date of the most recent transfer into this virtual account.
+     *
+     * Format: `yyyy/MM/dd HH:mm:ss.SSS`
+     */
+    latest_transaction_date?: string | null
+}
+
+/**
+ * Payment method of a customer, registered with a bank account for direct
+ * debit.
+ *
+ * Returned by `registerDirectDebitPaymentMethod`.
+ */
+export type DirectDebitPaymentMethodObject = Omit<CardPaymentMethodObject, "pay_type" | "card"> & {
+    pay_type: "Directdebit"
+
+    /**
+     * Whether the customer has opened `redirect_url`.
+     *
+     * - `0`: not opened yet
+     * - `1`: opened
+     */
+    redirect_url_accessed_flag?: "0" | "1"
+
+    /**
+     * Bank account details of this payment method.
+     */
+    directdebit?: PaymentMethodDirectDebit | null
+}
+
+/**
+ * Payment method of a customer, registered as a virtual account fixed to
+ * that customer.
+ *
+ * Returned by `registerVirtualAccountPaymentMethod`.
+ */
+export type VirtualAccountPaymentMethodObject =
+    Omit<CardPaymentMethodObject, "pay_type" | "card" | "redirect_url" | "return_url" | "return_url_on_failure"> & {
+        pay_type: "Virtualaccount"
+
+        /**
+         * Virtual account details of this payment method.
+         */
+        virtualaccount?: PaymentMethodVirtualAccount | null
+    }
+
+/**
+ * Payment method of a customer.
+ *
+ * Branch on `pay_type` to reach the details of the payment method.
+ */
+export type PaymentMethodObject =
+    | CardPaymentMethodObject
+    | DirectDebitPaymentMethodObject
+    | VirtualAccountPaymentMethodObject

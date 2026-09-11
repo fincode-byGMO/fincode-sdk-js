@@ -1,4 +1,4 @@
-import { registerCardPaymentMethod } from "./utils"
+import { registerCardPaymentMethod, registerDirectDebitPaymentMethod, registerVirtualAccountPaymentMethod } from "./utils"
 import { FincodeInstance, FincodeUI } from "./js"
 import { TokenIssuingResponse } from "./api"
 
@@ -245,5 +245,170 @@ describe("registerCardPaymentMethod", () => {
                 customerId: "c_0000000000",
             }),
         ).rejects.toThrow("couldn't register payment method")
+    })
+})
+
+describe("registerDirectDebitPaymentMethod", () => {
+    it("口座情報を directdebit ブロックに移す", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x", pay_type: "Directdebit" }))
+
+        await registerDirectDebitPaymentMethod({
+            fincode: stubFincode(),
+            customerId: "c_0000000000",
+            useDefault: true,
+            applicationType: "ONLINE",
+            returnUrl: "https://example.com/ok",
+            settlementRoute: "1",
+            bankCode: "0001",
+            branchCode: "001",
+            accountType: "1",
+            accountNumber: "1234567",
+            accountName: "テスト",
+            accountNameKana: "ﾃｽﾄ",
+        })
+
+        expect(lastRequest().body).toMatchObject({
+            pay_type: "Directdebit",
+            default_flag: "1",
+            return_url: "https://example.com/ok",
+            directdebit: {
+                application_type: "ONLINE",
+                settlement_route: "1",
+                bank_code: "0001",
+                branch_code: "001",
+                account_type: "1",
+                account_number: "1234567",
+                account_name_kana: "ﾃｽﾄ",
+            },
+        })
+    })
+
+    it("ONLINE で returnUrl が無ければ送信せずに落とす", async () => {
+        await expect(
+            registerDirectDebitPaymentMethod({
+                fincode: stubFincode(),
+                customerId: "c_0000000000",
+                applicationType: "ONLINE",
+                bankCode: "0001",
+                accountNameKana: "ﾃｽﾄ",
+            }),
+        ).rejects.toThrow("returnUrl is required")
+
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    it("PAPER で requestFormId が無ければ送信せずに落とす", async () => {
+        await expect(
+            registerDirectDebitPaymentMethod({
+                fincode: stubFincode(),
+                customerId: "c_0000000000",
+                applicationType: "PAPER",
+                bankCode: "0001",
+                accountNameKana: "ﾃｽﾄ",
+            }),
+        ).rejects.toThrow("requestFormId is required")
+
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    it("PAPER では requestFormId を paper_application に入れる", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
+
+        await registerDirectDebitPaymentMethod({
+            fincode: stubFincode(),
+            customerId: "c_0000000000",
+            applicationType: "PAPER",
+            requestFormId: "rf_0000000000",
+            bankCode: "0001",
+            accountNameKana: "ﾃｽﾄ",
+        })
+
+        expect(lastRequest().body.directdebit.paper_application).toEqual({ request_form_id: "rf_0000000000" })
+    })
+
+    it("ONLINE では paper_application を送らない", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
+
+        await registerDirectDebitPaymentMethod({
+            fincode: stubFincode(),
+            customerId: "c_0000000000",
+            applicationType: "ONLINE",
+            returnUrl: "https://example.com/ok",
+            bankCode: "0001",
+            accountNameKana: "ﾃｽﾄ",
+        })
+
+        expect(lastRequest().body.directdebit).not.toHaveProperty("paper_application")
+    })
+
+    it("トークンは発行しない", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
+        const fincode = stubFincode()
+
+        await registerDirectDebitPaymentMethod({
+            fincode,
+            customerId: "c_0000000000",
+            applicationType: "ONLINE",
+            returnUrl: "https://example.com/ok",
+            bankCode: "0001",
+            accountNameKana: "ﾃｽﾄ",
+        })
+
+        expect(fincode.tokens).not.toHaveBeenCalled()
+    })
+})
+
+describe("registerVirtualAccountPaymentMethod", () => {
+    it("決済種別とデフォルトフラグだけを送る", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x", pay_type: "Virtualaccount" }))
+
+        await registerVirtualAccountPaymentMethod({
+            fincode: stubFincode(),
+            customerId: "c_0000000000",
+            useDefault: true,
+        })
+
+        const body = lastRequest().body
+        expect(body).toMatchObject({ pay_type: "Virtualaccount", default_flag: "1" })
+        expect(body).not.toHaveProperty("card")
+        expect(body).not.toHaveProperty("directdebit")
+    })
+
+    it("UIもトークンも要らない", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
+        const fincode = stubFincode()
+
+        await registerVirtualAccountPaymentMethod({ fincode, customerId: "c_0000000000" })
+
+        expect(fincode.tokens).not.toHaveBeenCalled()
+        expect(fincode.ui).not.toHaveBeenCalled()
+    })
+
+    it("customerId が空なら送信せずに落とす", async () => {
+        await expect(
+            registerVirtualAccountPaymentMethod({ fincode: stubFincode(), customerId: "" }),
+        ).rejects.toThrow("customerId is required")
+
+        expect(global.fetch).not.toHaveBeenCalled()
+    })
+
+    it("3つのヘルパーが同じURLとヘッダを組む", async () => {
+        fetchMock().mockResolvedValue(jsonResponse(200, { id: "pm_x" }))
+
+        await registerVirtualAccountPaymentMethod({
+            fincode: stubFincode({
+                headers: {
+                    accept: "application/json",
+                    contentType: "application/json",
+                    tenantShopId: "s_0000000000",
+                    idempotentKey: "",
+                },
+            }),
+            customerId: "c_0000000000",
+        })
+
+        const { url, init } = lastRequest()
+        expect(url).toBe("https://api.test.fincode.jp/v1/customers/c_0000000000/payment_methods")
+        expect(init.headers).toMatchObject({ "Tenant-Shop-Id": "s_0000000000" })
     })
 })

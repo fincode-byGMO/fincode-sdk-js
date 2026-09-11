@@ -122,9 +122,19 @@ const ui = fincode.ui({
 
 ## Utility Functions
 
-このライブラリはfincodeJSのラッパーとしての機能に加え、さらに便利に利用できるユーティリティ関数を提供します。
+このライブラリはfincodeJSのラッパーとしての機能に加え、ユーティリティ関数を提供します。用途は2種類です。
 
-いずれもマウント済みのUIコンポーネントから入力値を読み取るため、`ui.mount` を呼んだあとに使用してください。
+**fincodeJSの呼び出しを簡略化するもの** — `executePayment`、`getCardToken`、`registerCard` です。マウント済みのUIコンポーネントから入力値を読み取ってfincodeJSの関数を呼ぶため、`ui.mount` を呼んだあとに使用してください。
+
+**fincodeJSが持たないAPIを呼ぶもの** — `registerCardPaymentMethod`、`registerDirectDebitPaymentMethod`、`registerVirtualAccountPaymentMethod` です。fincodeJSに決済手段API用の関数が無いため、fincodeインスタンスが持つパブリックキーとヘッダーを使ってこのライブラリが直接リクエストを送ります。`setTenantShopId` と `setIdempotentKey` で設定した値は反映されます。
+
+決済手段の登録は、その決済種別で最初の1件を `useDefault: true` で登録する必要があります。指定しない場合、APIがエラーを返します。
+
+| 決済種別 | エラーコード |
+| :------------- | :------------ |
+| カード | `EC013136002` |
+| 口座振替 | `EF010524002` |
+| バーチャル口座 | `EG009548002` |
 
 ### `executePayment`
 UIコンポーネントに入力されているカード情報をもとに決済実行JS（`payments()`）を呼び出します。
@@ -199,9 +209,63 @@ window.location.href = paymentMethod.redirect_url
 
 お客様を `redirect_url` へ誘導して認証を完了させてください。`tdsType` を渡さない場合は認証なしで登録され、`status` は `ACTIVATED` になります。
 
-対象はカードのみです。fincodeJS のUIコンポーネントがカード情報の入力フォームであるため、口座振替やバーチャル口座の決済手段はこの関数では登録できません。
+### `registerDirectDebitPaymentMethod`
+口座情報を顧客の決済手段として登録します。
+Promiseを返し、解決時には決済手段オブジェクト（`DirectDebitPaymentMethodObject`）を返します。
 
-この関数は fincodeJS のラッパーではありません。fincodeJS に決済手段API用の関数が無いため、fincodeインスタンスが持つパブリックキーとヘッダーを使って自身でリクエストを送ります。`setTenantShopId` と `setIdempotentKey` で設定した値は反映されます。
+fincodeJSに口座情報の入力フォームは無いため、口座情報は引数で渡します。
+
+```ts
+import { registerDirectDebitPaymentMethod } from "@fincode/js"
+
+(async () => {
+    const paymentMethod = await registerDirectDebitPaymentMethod({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        customerId: "<Customer ID>",
+        useDefault: true,
+
+        applicationType: "ONLINE", // "PAPER" | "ONLINE"
+        returnUrl: "https://example.com/complete", // required when applicationType is "ONLINE"
+        settlementRoute: "1", // "1": 5th, 6th, 23rd, 27th / "2": 1st, 5th, 20th, 26th
+        bankCode: "0001",
+        branchCode: "001",
+        accountType: "1", // "1": ordinary / "2": current
+        accountNumber: "1234567",
+        accountName: "テスト",
+        accountNameKana: "ﾃｽﾄ",
+    })
+
+    // applicationType が "ONLINE" の場合、お客様を redirect_url へ誘導します
+    window.location.href = paymentMethod.redirect_url
+})()
+```
+
+`applicationType` に `"ONLINE"` を渡した場合、お客様が金融機関のサイトで口座振替を承認します。`returnUrl` の指定が必須で、`status` は `AWAITING_CUSTOMER_ACTION` になり `redirect_url` が返ります。
+
+`"PAPER"` を渡した場合は依頼書での登録になり、`requestFormId` の指定が必須です。
+
+ゆうちょ銀行（`bankCode` が `9900`）の場合は、`branchCode` と `accountNumber` の代わりに `postalAccountNumber1` と `postalAccountNumber2` を指定します。
+
+### `registerVirtualAccountPaymentMethod`
+顧客に対して発行するバーチャル口座を決済手段として登録します。
+Promiseを返し、解決時には決済手段オブジェクト（`VirtualAccountPaymentMethodObject`）を返します。
+
+口座はfincodeが払い出すため、お客様から収集する情報はありません。
+
+```ts
+import { registerVirtualAccountPaymentMethod } from "@fincode/js"
+
+(async () => {
+    const paymentMethod = await registerVirtualAccountPaymentMethod({
+        fincode: fincode, // fincode instance (FincodeInstance)
+        customerId: "<Customer ID>",
+        useDefault: true,
+    })
+
+    // status は ACTIVATED になり、口座情報が virtualaccount に入る
+    const { va_branch_name, va_account_number } = paymentMethod.virtualaccount
+})()
+```
 
 ### `registerCard`
 UIコンポーネントに入力されているカード情報をもとにカードを登録します。

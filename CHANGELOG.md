@@ -63,9 +63,26 @@ READMEのサンプルコードを直しました。`ui.create("payment", ...)` �
 
 ### 追加
 
+決済手段を登録するユーティリティ関数を3つ追加しました。`registerCardPaymentMethod`、
+`registerDirectDebitPaymentMethod`、`registerVirtualAccountPaymentMethod` です。
+
+これまで登録時の3Dセキュア認証を行う手段がありませんでした。`registerCard` が
+呼ぶ `fincode.cards()` はカードAPIで、`tds_type` を受け取りません。
+
+fincodeJSは決済手段API用の関数を持たないため、この3つはfincodeインスタンスが持つ
+パブリックキーとヘッダーを使って自身でリクエストを送ります。送り方はfincodeJSに
+揃えてあり、`setTenantShopId` と `setIdempotentKey` で設定した値は反映されます。
+
+決済手段の型も追加しました。`PaymentMethodObject` は `pay_type` で判別する共用体で、
+カード（`CardPaymentMethodObject`）、口座振替（`DirectDebitPaymentMethodObject`）、
+バーチャル口座（`VirtualAccountPaymentMethodObject`）の3つに分かれます。
+
 `getCardsList` を追加しました。顧客が登録したカードの一覧を取得します。
 `ui.destroy` も追加しました。マウントしたフォームを取り除きます。どちらも
 fincodeJSは公開しているのに型がありませんでした。
+
+`FincodeInstance` に `config` を追加しました。fincodeJSが返すオブジェクトは
+APIのホストとヘッダー、パブリックキーを持っていますが、型にありませんでした。
 
 `Appearance` に7項目を追加しました。`theme`、`cardId`、`holderName`、
 `colorBackgroundRadio`、`colorRadio`、`colorRadioText`、`colorSelect` です。
@@ -98,6 +115,9 @@ enum に不足していた値を追加しました。`PaymentStatus` の
 
 `getFormData` の戻り値の型名を `FincodeUIFormData` にしました。`FormData` は
 DOM標準の型と衝突します。旧名は別名として残し `@deprecated` を付けています。
+
+`FincodeSDKError` が原因を捨てていたので `cause` を持たせました。リクエストが
+応答前に失敗した場合、CORSや名前解決といった理由が分からなくなっていました。
 
 ### テスト
 
